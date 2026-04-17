@@ -48,7 +48,7 @@
                 </label>
             </div>
 
-            <button onclick="updateAnnouncement()" 
+            <button id="annBtn" onclick="updateAnnouncement()" 
                 class="w-full bg-blue-600/20 text-blue-400 border border-blue-600/50 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95 text-sm md:text-base">
                 Update Announcement
             </button>
@@ -122,29 +122,57 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
-        // Announcement Logic
+        // Initialization
         window.onload = () => {
-            loadProducts();
-            document.getElementById('annMsg').value = localStorage.getItem('blitz_msg') || "";
-            document.getElementById('annStatus').checked = localStorage.getItem('blitz_active') === 'true';
+            loadInventory();
         };
 
-        function updateAnnouncement() {
+        // Announcement Logic (Direct to Google Sheets)
+        async function updateAnnouncement() {
             const msg = document.getElementById('annMsg').value;
             const isActive = document.getElementById('annStatus').checked;
-            localStorage.setItem('blitz_msg', msg);
-            localStorage.setItem('blitz_active', isActive);
-            alert("✅ Announcement Updated! Website မှာ စာသားပြောင်းလဲသွားပါပြီ။");
+            const btn = document.getElementById('annBtn');
+
+            if(!msg) return alert("စာသားထည့်ပါဦးဗျ။");
+
+            btn.disabled = true;
+            btn.innerText = "Updating...";
+
+            try {
+                await fetch(api_url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ 
+                        action: "updateAnnouncement", 
+                        message: msg, 
+                        isActive: isActive 
+                    })
+                });
+                alert("✅ Announcement Updated! Google Sheet ထဲတွင် သိမ်းဆည်းပြီးပါပြီ။");
+            } catch (e) {
+                alert("❌ Update လုပ်ရတာ အဆင်မပြေပါဘူး။");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Update Announcement";
+            }
         }
 
-        async function loadProducts() {
+        async function loadInventory() {
             const grid = document.getElementById('admin-product-grid');
             try {
                 const response = await fetch(api_url);
                 const data = await response.json();
-                grid.innerHTML = ''; 
+                
+                // Announcement values ပြန်ဖြည့်ပေးခြင်း
+                if(data.announcement !== undefined) {
+                    document.getElementById('annMsg').value = data.announcement;
+                    document.getElementById('annStatus').checked = data.isActive;
+                }
 
-                data.forEach(item => {
+                grid.innerHTML = ''; 
+                const products = data.products || data; // Handle both result formats
+
+                products.forEach(item => {
                     const isSold = item.status === "Sold Out";
                     const card = document.createElement('div');
                     card.className = `glass p-3 md:p-4 rounded-3xl border ${isSold ? 'border-red-900 opacity-75' : 'border-slate-800'} flex flex-col items-center text-center relative`;
@@ -180,7 +208,7 @@
                     body: JSON.stringify({ action, row })
                 });
                 alert("Updated successfully!");
-                setTimeout(loadProducts, 1000);
+                setTimeout(loadInventory, 1000);
             } catch (e) {
                 alert("Error updating status");
             }
@@ -211,8 +239,6 @@
                 await fetch(api_url, {
                     method: "POST",
                     mode: "no-cors",
-                    cache: "no-cache",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 });
 
@@ -225,7 +251,7 @@
                 document.getElementById('pImg2').value = "";
                 document.getElementById('pImg3').value = "";
                 
-                setTimeout(loadProducts, 1000);
+                setTimeout(loadInventory, 1000);
             } catch (e) {
                 alert("❌ အမှားအယွင်းတစ်ခု ရှိသွားပါတယ်။");
             } finally {
