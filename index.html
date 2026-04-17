@@ -45,15 +45,19 @@
                 }
 
                 items.forEach(item => {
-                    grid.innerHTML += `
-                        <div class="glass p-5 rounded-3xl hover:scale-105 transition duration-300">
-                            <img src="${item.img}" class="w-full h-44 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
-                            <h3 class="text-lg font-semibold truncate">${item.name}</h3>
-                            <p class="text-blue-400 font-bold text-xl mt-2">${item.price} MMK</p>
-                            <button class="w-full mt-4 py-2 bg-blue-600/20 border border-blue-500/50 rounded-xl hover:bg-blue-600 transition">Buy Now</button>
-                        </div>
-                    `;
-                });
+    // ပုံပေါ်လာစေဖို့ src နေရာမှာ item.img ကို သေချာထည့်ပေးရပါမယ်
+    grid.innerHTML += `
+        <div class="glass p-5 rounded-3xl">
+            <img src="${item.img}" 
+                 class="w-full h-44 object-cover rounded-2xl mb-4" 
+                 alt="${item.name}"
+                 onerror="this.src='https://via.placeholder.com/300?text=Image+Error'">
+            <h3 class="text-lg font-semibold truncate">${item.name}</h3>
+            <p class="text-blue-400 font-bold text-xl mt-2">${Number(item.price).toLocaleString()} MMK</p>
+            <button class="w-full mt-4 py-2 bg-blue-600 rounded-xl">Buy Now</button>
+        </div>
+    `;
+});
             } catch (error) {
                 console.error("Error details:", error);
                 grid.innerHTML = "<p class='text-red-400 text-center col-span-full'>Data ချိတ်ဆက်မှု အဆင်မပြေပါ။ ခဏနေမှ ပြန်ကြိုးစားကြည့်ပါ။</p>";
