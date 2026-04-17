@@ -26,12 +26,23 @@
     <script>
         // မင်းရဲ့ နောက်ဆုံးရလာတဲ့ URL အမှန်ကို ထည့်ပေးထားတယ်
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiUVhpGviZUCKt8moBnAE6RY9HdAHVr/exec";
+        
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             try {
+                // ပြင်ရမည့်အပိုင်း - fetch မှာ mode: 'cors' မထည့်ဘဲ ရိုးရိုးပဲ ခေါ်ကြည့်ပါ
                 const response = await fetch(api_url);
-                const items = await response.json();
+                
+                // response ကနေ text အရင်ယူပြီးမှ JSON ပြောင်းပါ (Error သိရအောင်)
+                const dataText = await response.text();
+                const items = JSON.parse(dataText);
+                
                 grid.innerHTML = ""; 
+
+                if (items.length === 0) {
+                    grid.innerHTML = "<p class='col-span-full text-center text-gray-400'>No products found in Database.</p>";
+                    return;
+                }
 
                 items.forEach(item => {
                     grid.innerHTML += `
@@ -44,7 +55,8 @@
                     `;
                 });
             } catch (error) {
-                grid.innerHTML = "<p class='text-red-400'>Error loading data. Please refresh.</p>";
+                console.error("Error details:", error);
+                grid.innerHTML = "<p class='text-red-400 text-center col-span-full'>Data ချိတ်ဆက်မှု အဆင်မပြေပါ။ ခဏနေမှ ပြန်ကြိုးစားကြည့်ပါ။</p>";
             }
         }
         window.onload = loadProducts;
