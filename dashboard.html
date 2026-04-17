@@ -8,8 +8,8 @@
     <style>
         body { background: #020617; color: white; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; font-family: 'Inter', sans-serif; padding: 40px 20px; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        input { transition: all 0.3s ease; }
-        input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        input, textarea { transition: all 0.3s ease; }
+        input:focus, textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
     </style>
 </head>
 <body>
@@ -30,6 +30,12 @@
                 <label class="text-xs text-gray-400 ml-2 mb-1 block">Price (MMK)</label>
                 <input type="number" id="pPrice" placeholder="e.g. 55000" 
                     class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white">
+            </div>
+
+            <div>
+                <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Details</label>
+                <textarea id="pDesc" placeholder="Describe the product features..." 
+                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white h-32 resize-none"></textarea>
             </div>
 
             <div>
@@ -103,7 +109,7 @@
                     body: JSON.stringify({ action, row })
                 });
                 alert("Updated successfully!");
-                loadProducts();
+                setTimeout(loadProducts, 1000); // 1 sec delay to allow sheet to update
             } catch (e) {
                 alert("Error updating status");
             }
@@ -112,10 +118,11 @@
         async function addProduct() {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
+            const desc = document.getElementById('pDesc').value;
             const img = document.getElementById('pImg').value;
             const btn = document.getElementById('upBtn');
 
-            if(!name || !price || !img) {
+            if(!name || !price || !img || !desc) {
                 alert("အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါဗျ။");
                 return;
             }
@@ -124,7 +131,7 @@
             btn.innerText = "Processing...";
             btn.style.opacity = "0.6";
 
-            const data = { name, price, img };
+            const data = { name, price, desc, img };
 
             try {
                 await fetch(api_url, {
@@ -139,9 +146,10 @@
                 
                 document.getElementById('pName').value = "";
                 document.getElementById('pPrice').value = "";
+                document.getElementById('pDesc').value = "";
                 document.getElementById('pImg').value = "";
                 
-                loadProducts();
+                setTimeout(loadProducts, 1000);
 
             } catch (e) {
                 console.error("Error:", e);
