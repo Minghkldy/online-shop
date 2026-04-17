@@ -15,6 +15,27 @@
             overflow-x: hidden;
         }
 
+        /* Announcement Bar Animation */
+        #marquee-box { 
+            display: none; 
+            overflow: hidden; 
+            white-space: nowrap; 
+            background: rgba(37, 99, 235, 0.15); 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2); 
+            backdrop-filter: blur(10px);
+        }
+        .marquee-text { 
+            display: inline-block; 
+            padding-left: 100%; 
+            animation: marquee 20s linear infinite; 
+            color: #60a5fa; 
+            font-weight: 700; 
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 14px;
+        }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
         /* Premium Glass Effect */
         .glass { 
             background: rgba(255, 255, 255, 0.03); 
@@ -92,6 +113,10 @@
     </style>
 </head>
 <body>
+    <div id="marquee-box">
+        <p id="marquee-content" class="marquee-text"></p>
+    </div>
+
     <nav class="p-6 glass sticky top-0 z-50 flex justify-between items-center px-8 md:px-16 border-b border-white/5">
         <h1 class="text-3xl font-extrabold tracking-tighter">
             <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent">BLITZ</span>
@@ -161,6 +186,21 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
         let allItems = [];
+
+        // Dashboard Settings Sync Logic
+        function syncAnnouncement() {
+            const msg = localStorage.getItem('blitz_msg');
+            const isActive = localStorage.getItem('blitz_active') === 'true';
+            const box = document.getElementById('marquee-box');
+            const content = document.getElementById('marquee-content');
+
+            if (isActive && msg) {
+                content.innerText = msg;
+                box.style.display = "block";
+            } else {
+                box.style.display = "none";
+            }
+        }
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
@@ -298,7 +338,12 @@
             if (event.target == document.getElementById('contactModal')) closeContactModal();
         }
 
-        window.onload = loadProducts;
+        window.onload = () => {
+            syncAnnouncement();
+            loadProducts();
+            // Listen for changes from dashboard in other tabs
+            window.addEventListener('storage', syncAnnouncement);
+        };
     </script>
 </body>
 </html>
