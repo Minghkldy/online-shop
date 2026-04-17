@@ -235,7 +235,9 @@
             });
         }
 
+        // Updated Web App Link
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
+        
         let allItems = [];
         let currentZoomImages = [];
         let currentZoomIndex = 0;
@@ -280,18 +282,19 @@
                 const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
                 const imgListJSON = JSON.stringify(imgList);
 
-                // --- Discount Logic ---
+                // --- Improved Discount Display Logic ---
                 const price = Number(item.price);
-                const oldPrice = Number(item.oldPrice);
+                const discountPercent = Number(item.discount) || 0;
                 let discountHTML = '';
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${price.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
-                if (oldPrice > price) {
-                    const discount = Math.round(((oldPrice - price) / oldPrice) * 100);
-                    discountHTML = `<div class="discount-badge">${discount}% OFF</div>`;
+                if (discountPercent > 0) {
+                    // Calculate original price for display
+                    const originalPrice = Math.round(price / (1 - (discountPercent / 100)));
+                    discountHTML = `<div class="discount-badge">${discountPercent}% OFF</div>`;
                     priceDisplay = `
                         <div class="mb-6">
-                            <span class="text-gray-500 text-xs line-through block">${oldPrice.toLocaleString()} MMK</span>
+                            <span class="text-gray-500 text-xs line-through block">${originalPrice.toLocaleString()} MMK</span>
                             <span class="text-blue-400 font-black text-2xl">${price.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></span>
                         </div>`;
                 }
@@ -333,13 +336,14 @@
             const imgListJSON = JSON.stringify(imgList);
 
             const price = Number(item.price);
-            const oldPrice = Number(item.oldPrice);
+            const discountPercent = Number(item.discount) || 0;
             let detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${price.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
             
-            if (oldPrice > price) {
+            if (discountPercent > 0) {
+                const originalPrice = Math.round(price / (1 - (discountPercent / 100)));
                 detailPriceHTML = `
                     <div class="mb-6">
-                        <span class="text-gray-500 text-sm line-through block">${oldPrice.toLocaleString()} MMK</span>
+                        <span class="text-gray-500 text-sm line-through block">${originalPrice.toLocaleString()} MMK</span>
                         <span class="text-blue-400 font-black text-3xl">${price.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></span>
                     </div>`;
             }
