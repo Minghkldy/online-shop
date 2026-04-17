@@ -14,7 +14,6 @@
         input, textarea, select { transition: all 0.3s ease; }
         input:focus, textarea:focus, select:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
         
-        /* Toggle Switch Style */
         .toggle-dot { transition: all 0.3s ease-in-out; }
         input:checked ~ .toggle-dot { transform: translateX(100%); background-color: #3b82f6; }
 
@@ -58,7 +57,7 @@
     <div class="max-w-md w-full glass p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl mb-12">
         <div class="text-center mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-blue-500 tracking-tight uppercase">Admin Panel</h1>
-            <p class="text-gray-500 text-xs md:text-sm mt-2">Add new products (3 Images) to your store</p>
+            <p class="text-gray-500 text-xs md:text-sm mt-2">Add new products with discount pricing</p>
         </div>
 
         <div class="space-y-4">
@@ -83,10 +82,17 @@
                 </div>
             </div>
 
-            <div>
-                <label class="text-xs text-gray-400 ml-2 mb-1 block">Price (MMK)</label>
-                <input type="number" id="pPrice" placeholder="e.g. 55000" 
-                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Price (MMK)</label>
+                    <input type="number" id="pPrice" placeholder="55000" 
+                        class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Discount (%)</label>
+                    <input type="number" id="pDiscount" placeholder="0" 
+                        class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
             </div>
 
             <div>
@@ -122,19 +128,14 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
-        // Initialization
-        window.onload = () => {
-            loadInventory();
-        };
+        window.onload = loadInventory;
 
-        // Announcement Logic (Direct to Google Sheets)
         async function updateAnnouncement() {
             const msg = document.getElementById('annMsg').value;
             const isActive = document.getElementById('annStatus').checked;
             const btn = document.getElementById('annBtn');
 
             if(!msg) return alert("စာသားထည့်ပါဦးဗျ။");
-
             btn.disabled = true;
             btn.innerText = "Updating...";
 
@@ -142,15 +143,11 @@
                 await fetch(api_url, {
                     method: "POST",
                     mode: "no-cors",
-                    body: JSON.stringify({ 
-                        action: "updateAnnouncement", 
-                        message: msg, 
-                        isActive: isActive 
-                    })
+                    body: JSON.stringify({ action: "updateAnnouncement", message: msg, isActive: isActive })
                 });
-                alert("✅ Announcement Updated! Google Sheet ထဲတွင် သိမ်းဆည်းပြီးပါပြီ။");
+                alert("✅ Announcement Updated!");
             } catch (e) {
-                alert("❌ Update လုပ်ရတာ အဆင်မပြေပါဘူး။");
+                alert("❌ Error updating announcement.");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Update Announcement";
@@ -163,22 +160,24 @@
                 const response = await fetch(api_url);
                 const data = await response.json();
                 
-                // Announcement values ပြန်ဖြည့်ပေးခြင်း
                 if(data.announcement !== undefined) {
                     document.getElementById('annMsg').value = data.announcement;
                     document.getElementById('annStatus').checked = data.isActive;
                 }
 
                 grid.innerHTML = ''; 
-                const products = data.products || data; // Handle both result formats
+                const products = data.products || data;
 
                 products.forEach(item => {
                     const isSold = item.status === "Sold Out";
                     const card = document.createElement('div');
                     card.className = `glass p-3 md:p-4 rounded-3xl border ${isSold ? 'border-red-900 opacity-75' : 'border-slate-800'} flex flex-col items-center text-center relative`;
                     
+                    const discountBadge = item.discount > 0 ? `<span class="absolute top-2 right-2 bg-red-600 text-[8px] px-2 py-1 rounded-lg font-bold">-${item.discount}%</span>` : '';
+
                     card.innerHTML = `
                         <span class="absolute top-2 left-2 bg-blue-600/80 backdrop-blur text-[7px] md:text-[8px] px-2 py-1 rounded-full uppercase font-bold z-10">${item.category || 'Other'}</span>
+                        ${discountBadge}
                         <div class="w-full h-24 md:h-32 overflow-hidden rounded-2xl mb-3 shadow-inner">
                             <img src="${item.img1}" class="w-full h-full object-cover ${isSold ? 'grayscale' : ''}">
                         </div>
@@ -199,24 +198,10 @@
             }
         }
 
-        async function updateStatus(row, action) {
-            if(!confirm("Are you sure?")) return;
-            try {
-                await fetch(api_url, {
-                    method: "POST",
-                    mode: "no-cors",
-                    body: JSON.stringify({ action, row })
-                });
-                alert("Updated successfully!");
-                setTimeout(loadInventory, 1000);
-            } catch (e) {
-                alert("Error updating status");
-            }
-        }
-
         async function addProduct() {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
+            const discount = document.getElementById('pDiscount').value || 0;
             const desc = document.getElementById('pDesc').value;
             const category = document.getElementById('pCat').value;
             const img1 = document.getElementById('pImg1').value;
@@ -231,9 +216,8 @@
 
             btn.disabled = true;
             btn.innerText = "Processing...";
-            btn.style.opacity = "0.6";
 
-            const data = { name, price, desc, category, img1, img2, img3 };
+            const data = { name, price, discount, desc, category, img1, img2, img3 };
 
             try {
                 await fetch(api_url, {
@@ -244,20 +228,28 @@
 
                 alert("✅ ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။");
                 
-                document.getElementById('pName').value = "";
-                document.getElementById('pPrice').value = "";
-                document.getElementById('pDesc').value = "";
-                document.getElementById('pImg1').value = "";
-                document.getElementById('pImg2').value = "";
-                document.getElementById('pImg3').value = "";
-                
-                setTimeout(loadInventory, 1000);
+                ['pName', 'pPrice', 'pDiscount', 'pDesc', 'pImg1', 'pImg2', 'pImg3'].forEach(id => document.getElementById(id).value = "");
+                setTimeout(loadInventory, 1500);
             } catch (e) {
                 alert("❌ အမှားအယွင်းတစ်ခု ရှိသွားပါတယ်။");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Upload Product";
-                btn.style.opacity = "1";
+            }
+        }
+
+        async function updateStatus(row, action) {
+            if(!confirm("Are you sure?")) return;
+            try {
+                await fetch(api_url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ action, row })
+                });
+                alert("Updated!");
+                setTimeout(loadInventory, 1500);
+            } catch (e) {
+                alert("Error updating status");
             }
         }
     </script>
