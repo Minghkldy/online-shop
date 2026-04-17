@@ -5,132 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blitz Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         body { 
-            background: #0f172a; 
-            color: white; 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            color: #f8fafc; 
             min-height: 100vh; 
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
         }
-        .glass { 
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-        }
-        .product-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
-        }
-        .modal-enter { animation: fadeIn 0.3s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        
-        .contact-btn { transition: all 0.2s ease; }
-        .contact-btn:hover { transform: scale(1.05); }
 
-        .rotating { animation: rotate 1s linear infinite; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Premium Glass Effect */
+        .glass { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Product Card Animation */
+        .product-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        /* Category Buttons */
+        .cat-btn {
+            white-space: nowrap;
+            padding: 10px 24px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .cat-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .cat-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+        }
 
         .img-slider {
             display: flex;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            gap: 10px;
-            border-radius: 1.5rem;
+            gap: 12px;
+            border-radius: 24px;
             -webkit-overflow-scrolling: touch;
         }
-        .img-slider::-webkit-scrollbar {
-            height: 4px;
-        }
-        .img-slider::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 10px;
-        }
+
         .slider-item {
             flex: 0 0 100%;
             scroll-snap-align: start;
-            height: 300px;
+            height: 350px;
             object-fit: cover;
-            border-radius: 1.5rem;
+            border-radius: 24px;
         }
 
-        /* Category Button Style */
-        .cat-btn {
-            white-space: nowrap;
-            padding: 8px 20px;
-            border-radius: 99px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .cat-btn.active {
-            background: #2563eb;
-            color: white;
-            border-color: #3b82f6;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
+        .rotating { animation: rotate 1s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <nav class="p-5 glass sticky top-0 z-50 flex justify-between items-center px-8">
-        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent underline decoration-blue-500/30">
-            BLITZ STORE
+    <nav class="p-6 glass sticky top-0 z-50 flex justify-between items-center px-8 md:px-16 border-b border-white/5">
+        <h1 class="text-3xl font-extrabold tracking-tighter">
+            <span class="bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent">BLITZ</span>
+            <span class="text-white">STORE</span>
         </h1>
         <div class="flex items-center gap-4">
-            <button id="navRefreshBtn" onclick="loadProducts()" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full text-sm font-bold transition flex items-center gap-2">
-                <span id="refreshIcon">🔄</span> Refresh
+            <button id="navRefreshBtn" onclick="loadProducts()" class="glass hover:bg-white/10 px-6 py-2.5 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 border border-white/10">
+                <span id="refreshIcon">🔄</span> Update
             </button>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto p-8">
-        <div class="flex items-center gap-3 overflow-x-auto pb-6 mb-4 no-scrollbar" id="category-list">
-            <button onclick="filterProducts('All', this)" class="cat-btn active">All</button>
-            <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn glass">လူကြီးကစားစရာအရုပ်</button>
-            <button onclick="filterProducts('Clothing', this)" class="cat-btn glass">Clothing</button>
-            <button onclick="filterProducts('Electronics', this)" class="cat-btn glass">Electronics</button>
-            <button onclick="filterProducts('Gadgets', this)" class="cat-btn glass">Gadgets</button>
-            <button onclick="filterProducts('Shoes', this)" class="cat-btn glass">Shoes</button>
-            <button onclick="filterProducts('Cosmetics', this)" class="cat-btn glass">Cosmetics</button>
-            <button onclick="filterProducts('Food', this)" class="cat-btn glass">Food</button>
+    <main class="max-w-7xl mx-auto p-8 md:p-12">
+        <div class="flex items-center gap-3 overflow-x-auto pb-8 mb-4 no-scrollbar" id="category-list">
+            <button onclick="filterProducts('All', this)" class="cat-btn active">All Collection</button>
+            <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn">လူကြီးကစားစရာ</button>
+            <button onclick="filterProducts('Clothing', this)" class="cat-btn">Clothing</button>
+            <button onclick="filterProducts('Electronics', this)" class="cat-btn">Electronics</button>
+            <button onclick="filterProducts('Gadgets', this)" class="cat-btn">Gadgets</button>
+            <button onclick="filterProducts('Shoes', this)" class="cat-btn">Shoes</button>
+            <button onclick="filterProducts('Cosmetics', this)" class="cat-btn">Cosmetics</button>
+            <button onclick="filterProducts('Food', this)" class="cat-btn">Food</button>
         </div>
 
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-3xl font-bold" id="grid-title">Latest Products</h2>
+        <div class="mb-10">
+            <h2 class="text-4xl font-black bg-gradient-to-br from-white to-gray-500 bg-clip-text text-transparent" id="grid-title">Latest Products</h2>
         </div>
         
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div class="col-span-full text-center py-20">
-                <p class="text-gray-400 animate-pulse text-lg">Loading products from Database...</p>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+            <div class="col-span-full text-center py-32">
+                <div class="inline-block p-4 rounded-full bg-blue-500/10 mb-4">
+                    <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden items-center justify-center p-5">
-        <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] relative modal-enter">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl z-[110]">✕</button>
-            <div id="modalContent"></div>
+    <div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] hidden items-center justify-center p-4">
+        <div class="glass max-w-2xl w-full p-2 rounded-[40px] relative modal-enter overflow-hidden border border-white/10">
+            <button onclick="closeModal()" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-black/20 hover:bg-red-500/80 rounded-full text-white transition-all z-[110] backdrop-blur-md">✕</button>
+            <div id="modalContent" class="p-6"></div>
         </div>
     </div>
 
-    <div id="contactModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[120] hidden items-center justify-center p-5">
-        <div class="glass max-w-xs w-full p-8 rounded-[2.5rem] relative text-center">
-            <button onclick="closeContactModal()" class="absolute top-5 right-5 text-gray-400">✕</button>
-            <h3 class="text-xl font-bold mb-6">မှာယူမည့်နည်းလမ်း</h3>
+    <div id="contactModal" class="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[120] hidden items-center justify-center p-6">
+        <div class="glass max-w-sm w-full p-10 rounded-[40px] relative text-center border-white/10">
+            <button onclick="closeContactModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">✕</button>
+            <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-3xl">🛍️</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-2">မှာယူမည့်နည်းလမ်း</h3>
+            <p class="text-gray-400 text-sm mb-8">ဆက်သွယ်ရန် တစ်ခုခုကို ရွေးချယ်ပေးပါ</p>
             <div class="space-y-4">
-                <a href="viber://chat?number=+959953262080" class="contact-btn flex items-center justify-center gap-3 w-full py-4 bg-[#7360f2] rounded-2xl font-bold text-white shadow-lg shadow-purple-900/20">
+                <a href="viber://chat?number=+959953262080" class="flex items-center justify-center gap-3 w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Viber_logo_2018.png" class="w-6 h-6 object-contain" alt="Viber">
-                    Viber မှ မှာယူမည်
+                    Viber Chat
                 </a>
-                <a href="https://t.me/Mm9999ki" target="_blank" class="contact-btn flex items-center justify-center gap-3 w-full py-4 bg-[#24A1DE] rounded-2xl font-bold text-white shadow-lg shadow-blue-900/20">
+                <a href="https://t.me/Mm9999ki" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-sky-600 hover:bg-sky-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-sky-500/20 active:scale-95">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="w-6 h-6" alt="Telegram">
-                    Telegram မှ မှာယူမည်
+                    Telegram Channel
                 </a>
             </div>
         </div>
@@ -151,7 +173,7 @@
                 displayProducts(allItems);
             } catch (error) {
                 console.error("Error:", error);
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-400">⚠️ Data ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။ ခဏနေမှ ပြန်ကြိုးစားပေးပါ။</div>`;
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('rotating');
             }
@@ -171,32 +193,32 @@
                 const productData = encodeURIComponent(JSON.stringify(item));
 
                 grid.innerHTML += `
-                    <div class="glass p-5 rounded-3xl product-card flex flex-col ${isSold ? 'opacity-75' : ''}">
-                        <div class="w-full h-48 mb-4 overflow-hidden rounded-2xl bg-slate-800 relative">
-                            <span class="absolute top-2 left-2 z-10 bg-blue-600/80 backdrop-blur text-[10px] px-2 py-1 rounded-lg font-bold uppercase tracking-wider">${item.category || 'Other'}</span>
+                    <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''}">
+                        <div class="w-full h-52 mb-5 overflow-hidden rounded-[24px] relative group">
+                            <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest border border-white/10">${item.category || 'Luxury'}</span>
                             <img src="${item.img1}" 
-                                 class="w-full h-full object-cover block ${isSold ? 'grayscale' : ''}" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                                  alt="${item.name}"
                                  onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                             ${isSold ? `
-                                <div class="absolute inset-0 flex items-center justify-center bg-black/40">
-                                    <span class="bg-red-600 text-white px-4 py-1 rounded-full font-bold text-sm tracking-widest uppercase shadow-lg">Sold Out</span>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+                                    <span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs tracking-tighter uppercase shadow-2xl">Sold Out</span>
                                 </div>
                             ` : ''}
                         </div>
                         
-                        <div class="flex flex-col flex-grow">
-                            <h3 class="text-lg font-semibold truncate text-gray-100">${item.name}</h3>
-                            <p class="text-blue-400 font-bold text-xl mt-2">
-                                ${Number(item.price).toLocaleString()} <span class="text-xs text-gray-400">MMK</span>
+                        <div class="px-2 flex flex-col flex-grow">
+                            <h3 class="text-lg font-bold truncate text-white mb-2">${item.name}</h3>
+                            <p class="text-blue-400 font-black text-2xl mb-6">
+                                ${Number(item.price).toLocaleString()} <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">MMK</span>
                             </p>
                             
-                            <div class="mt-auto pt-5 flex gap-2">
-                                <button onclick="showDetails('${productData}')" class="flex-1 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 transition-all font-bold text-sm">
-                                    Details
+                            <div class="mt-auto flex gap-3">
+                                <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase tracking-widest">
+                                    Info
                                 </button>
-                                <button onclick="openContactModal()" class="flex-[2] py-3 ${isSold ? 'bg-gray-700 border-gray-600 cursor-not-allowed text-gray-400' : 'bg-blue-600 border-blue-500 hover:bg-blue-500 text-white'} border rounded-xl transition-all font-bold text-center" ${isSold ? 'disabled' : ''}>
-                                    ${isSold ? 'Sold Out' : 'Buy Now'}
+                                <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 active:scale-95 disabled:bg-gray-800 disabled:text-gray-500 disabled:shadow-none" ${isSold ? 'disabled' : ''}>
+                                    ${isSold ? 'Sold Out' : 'Order Now'}
                                 </button>
                             </div>
                         </div>
@@ -206,15 +228,9 @@
         }
 
         function filterProducts(category, btn) {
-            // Update active button UI
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('active', 'bg-blue-600');
-                b.classList.add('glass');
-            });
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            btn.classList.remove('glass');
 
-            // Filter logic
             if (category === 'All') {
                 displayProducts(allItems);
                 document.getElementById('grid-title').innerText = "Latest Products";
@@ -235,22 +251,27 @@
             if(item.img3) imagesHtml += `<img src="${item.img3}" class="slider-item">`;
 
             content.innerHTML = `
-                <div class="img-slider mb-4">
-                    ${imagesHtml}
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/2">
+                        <div class="img-slider mb-4">
+                            ${imagesHtml}
+                        </div>
+                        ${item.img2 ? '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Swipe to view more ↔️</p>' : ''}
+                    </div>
+                    <div class="md:w-1/2 flex flex-col justify-center">
+                        <span class="text-blue-500 font-bold text-xs uppercase tracking-[0.2em] mb-2">${item.category || 'Luxury'}</span>
+                        <h2 class="text-3xl font-black mb-3 text-white leading-tight">${item.name}</h2>
+                        <div class="flex items-center gap-3 mb-6">
+                           <p class="text-blue-400 font-black text-3xl">${Number(item.price).toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>
+                        </div>
+                        <div class="bg-white/5 p-6 rounded-[24px] border border-white/5 max-h-48 overflow-y-auto mb-8 no-scrollbar">
+                            <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No description provided.'}</p>
+                        </div>
+                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-500/40 transition-all active:scale-95">
+                            Confirm Order
+                        </button>
+                    </div>
                 </div>
-                ${item.img2 ? '<p class="text-[10px] text-gray-500 text-center mb-4">Slide left to see more images ↔️</p>' : ''}
-                
-                <h2 class="text-2xl font-bold mb-1 text-white">${item.name}</h2>
-                <div class="flex justify-between items-center mb-4">
-                   <p class="text-blue-400 font-bold text-2xl">${Number(item.price).toLocaleString()} MMK</p>
-                   <span class="bg-blue-600/30 text-blue-400 text-[10px] px-3 py-1 rounded-full font-bold uppercase">${item.category || 'Other'}</span>
-                </div>
-                <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 max-h-40 overflow-y-auto mb-6">
-                    <p class="text-gray-300 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No details provided.'}</p>
-                </div>
-                <button onclick="openContactModal()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
-                    ပစ္စည်းမှာယူမည်
-                </button>
             `;
             modal.classList.remove('hidden'); modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
@@ -273,10 +294,8 @@
         }
 
         window.onclick = function(event) {
-            const dModal = document.getElementById('detailModal');
-            const cModal = document.getElementById('contactModal');
-            if (event.target == dModal) closeModal();
-            if (event.target == cModal) closeContactModal();
+            if (event.target == document.getElementById('detailModal')) closeModal();
+            if (event.target == document.getElementById('contactModal')) closeContactModal();
         }
 
         window.onload = loadProducts;
