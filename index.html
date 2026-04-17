@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* --- Discount Badge CSS --- */
         .discount-badge {
             position: absolute;
             top: 12px;
@@ -188,8 +187,7 @@
             <h2 class="text-4xl font-black bg-gradient-to-br from-white to-gray-500 bg-clip-text text-transparent" id="grid-title">Latest Products</h2>
         </div>
         
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-            </div>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"></div>
     </main>
 
     <div id="zoomOverlay">
@@ -241,7 +239,6 @@
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
             
-            // ၁။ အရင်ဆုံး Local Storage ထဲမှာ data ရှိမရှိစစ်ပြီး ရှိရင် အရင်ပြထားမယ်
             const cachedData = localStorage.getItem('blitz_products');
             if (cachedData && allItems.length === 0) {
                 const data = JSON.parse(cachedData);
@@ -249,7 +246,6 @@
                 displayProducts(allItems);
                 handleMarquee(data);
             } else if (allItems.length === 0) {
-                // ဘာ data မှ မရှိသေးရင် loading ပြမယ်
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-32">
                         <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -262,12 +258,8 @@
             try {
                 const response = await fetch(api_url);
                 const data = await response.json();
-                
-                // ၂။ Database ကနေ data ရလာရင် Local Storage မှာ အသစ်လဲပြီး Update လုပ်မယ်
                 localStorage.setItem('blitz_products', JSON.stringify(data));
-                
                 handleMarquee(data);
-
                 allItems = data.products || data;
                 displayProducts(allItems);
             } catch (error) {
@@ -311,6 +303,7 @@
 
                 if (discountValue > 0) {
                     const salePrice = originalPrice - discountValue;
+                    // --- Fix: Calculation change to (Discount / Original) * 100 ---
                     const discountPercent = Math.round((discountValue / originalPrice) * 100);
                     
                     discountHTML = `<div class="discount-badge">-${discountPercent}%</div>`;
