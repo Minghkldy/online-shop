@@ -27,6 +27,9 @@
         /* Modal Animation */
         .modal-enter { animation: fadeIn 0.3s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .contact-btn { transition: all 0.2s ease; }
+        .contact-btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -58,6 +61,25 @@
         <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] relative modal-enter">
             <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl">✕</button>
             <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div id="contactModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[110] hidden items-center justify-center p-5">
+        <div class="glass max-w-xs w-full p-8 rounded-[2.5rem] relative text-center">
+            <button onclick="closeContactModal()" class="absolute top-5 right-5 text-gray-400">✕</button>
+            <h3 class="text-xl font-bold mb-6">မှာယူမည့်နည်းလမ်း</h3>
+            
+            <div class="space-y-4">
+                <a href="viber://chat?number=+959953262080" class="contact-btn flex items-center justify-center gap-3 w-full py-4 bg-[#7360f2] rounded-2xl font-bold text-white shadow-lg shadow-purple-900/20">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Viber_logo_2018.svg" class="w-6 h-6" alt="Viber">
+                    Viber မှ မှာယူမည်
+                </a>
+                
+                <a href="https://t.me/Mm9999ki" target="_blank" class="contact-btn flex items-center justify-center gap-3 w-full py-4 bg-[#24A1DE] rounded-2xl font-bold text-white shadow-lg shadow-blue-900/20">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="w-6 h-6" alt="Telegram">
+                    Telegram မှ မှာယူမည်
+                </a>
+            </div>
         </div>
     </div>
 
@@ -106,7 +128,7 @@
                                     <button onclick="showDetails('${productData}')" class="flex-1 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 transition-all font-bold text-sm">
                                         Details
                                     </button>
-                                    <button class="flex-[2] py-3 ${isSold ? 'bg-gray-700 border-gray-600 cursor-not-allowed text-gray-400' : 'bg-blue-600 border-blue-500 hover:bg-blue-500 text-white'} border rounded-xl transition-all font-bold text-center" ${isSold ? 'disabled' : ''}>
+                                    <button onclick="openContactModal()" class="flex-[2] py-3 ${isSold ? 'bg-gray-700 border-gray-600 cursor-not-allowed text-gray-400' : 'bg-blue-600 border-blue-500 hover:bg-blue-500 text-white'} border rounded-xl transition-all font-bold text-center" ${isSold ? 'disabled' : ''}>
                                         ${isSold ? 'Sold Out' : 'Buy Now'}
                                     </button>
                                 </div>
@@ -132,27 +154,38 @@
                 <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 max-h-40 overflow-y-auto mb-6">
                     <p class="text-gray-300 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No details provided.'}</p>
                 </div>
-                <button class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
-                    Order via Messenger
+                <button onclick="openContactModal()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
+                    ပစ္စည်းမှာယူမည်
                 </button>
             `;
             
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            document.body.style.overflow = 'hidden'; // Stop scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             const modal = document.getElementById('detailModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
+            document.body.style.overflow = 'auto';
         }
 
-        // Close modal when clicking outside the box
+        function openContactModal() {
+            document.getElementById('contactModal').classList.remove('hidden');
+            document.getElementById('contactModal').classList.add('flex');
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal').classList.add('hidden');
+            document.getElementById('contactModal').classList.remove('flex');
+        }
+
         window.onclick = function(event) {
-            const modal = document.getElementById('detailModal');
-            if (event.target == modal) closeModal();
+            const dModal = document.getElementById('detailModal');
+            const cModal = document.getElementById('contactModal');
+            if (event.target == dModal) closeModal();
+            if (event.target == cModal) closeContactModal();
         }
 
         window.onload = loadProducts;
