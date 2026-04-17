@@ -18,7 +18,7 @@
             overflow-x: hidden;
         }
 
-        /* Announcement Animation */
+        /* --- Announcement CSS (Updated for Mobile) --- */
         .nav-marquee-container {
             flex-grow: 1;
             overflow: hidden;
@@ -27,6 +27,21 @@
             background: rgba(37, 99, 235, 0.1);
             border-radius: 12px;
             display: none; 
+        }
+
+        /* ဖုန်းဆိုဒ်အတွက် ပြင်ဆင်ချက် */
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap; /* Navbar ကို အတန်းဆင်းခွင့်ပြုမယ် */
+                gap: 10px;
+                padding: 15px !important;
+            }
+            .nav-marquee-container {
+                order: 3; /* Announcement ကို အောက်ဆုံးအတန်းကို ပို့မယ် */
+                width: 100%;
+                margin: 5px 0 0 0;
+                flex-grow: 0;
+            }
         }
 
         .marquee-text { 
@@ -118,7 +133,6 @@
             overflow-y: auto;
         }
 
-        /* --- Updated Zoom Overlay Style with Navigation --- */
         #zoomOverlay {
             display: none;
             position: fixed;
@@ -251,13 +265,10 @@
         let currentZoomImages = [];
         let currentZoomIndex = 0;
 
-        // Updated Image Zoom Functions with Slider logic
         function openZoom(images, index = 0) {
             currentZoomImages = Array.isArray(images) ? images : [images];
             currentZoomIndex = index;
-            
             updateZoomUI();
-            
             const overlay = document.getElementById('zoomOverlay');
             overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -266,11 +277,8 @@
         function updateZoomUI() {
             const img = document.getElementById('zoomedImg');
             img.src = currentZoomImages[currentZoomIndex];
-            
-            // Hide arrows if only one image exists
             const prevBtn = document.querySelector('.zoom-nav.prev');
             const nextBtn = document.querySelector('.zoom-nav.next');
-            
             if(currentZoomImages.length <= 1) {
                 prevBtn.style.display = 'none';
                 nextBtn.style.display = 'none';
@@ -294,7 +302,6 @@
             }
         }
 
-        // Keyboard support for Zoom
         document.addEventListener('keydown', (e) => {
             if (document.getElementById('zoomOverlay').style.display === 'flex') {
                 if (e.key === "ArrowLeft") changeZoomImg(-1);
