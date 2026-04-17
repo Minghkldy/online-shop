@@ -3,75 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blitz Store - Customer View</title>
+    <title>Blitz Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: #0f172a; color: white; min-height: 100vh; }
         .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .product-card { transition: all 0.3s ease; }
-        .product-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.5); }
     </style>
 </head>
 <body>
-    <nav class="p-5 glass sticky top-0 z-50 flex justify-between items-center px-8">
+    <nav class="p-5 glass sticky top-0 z-50 flex justify-between px-8">
         <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">BLITZ STORE</h1>
-        <div class="space-x-6">
-            <a href="#" class="hover:text-blue-400 transition">Home</a>
-            <button class="bg-blue-600 hover:bg-blue-700 px-5 py-1.5 rounded-full text-sm font-medium transition shadow-lg shadow-blue-500/20">Cart</button>
-        </div>
+        <button class="bg-blue-600 px-5 py-1 rounded-full text-sm">Cart</button>
     </nav>
 
     <div class="max-w-7xl mx-auto p-8">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-3xl font-bold">Latest Products</h2>
-            <button onclick="loadProducts()" class="text-sm text-blue-400 hover:underline">Refresh List</button>
-        </div>
-        
+        <h2 class="text-3xl font-bold mb-10">Latest Products</h2>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div class="col-span-full text-center py-20">
-                <p class="text-gray-400 animate-pulse">Loading products from Database...</p>
-            </div>
+            <p class="animate-pulse text-gray-400">Loading products...</p>
         </div>
     </div>
 
     <script>
+        // မင်းရဲ့ နောက်ဆုံးရလာတဲ့ URL အမှန်ကို ထည့်ပေးထားတယ်
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiUVhpGviZUCKt8moBnAE6RY9HdAHVr/exec";
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
-            
             try {
                 const response = await fetch(api_url);
                 const items = await response.json();
-                
                 grid.innerHTML = ""; 
-
-                if (items.length === 0) {
-                    grid.innerHTML = "<p class='col-span-full text-center text-gray-500'>No products found.</p>";
-                    return;
-                }
 
                 items.forEach(item => {
                     grid.innerHTML += `
-                        <div class="glass p-5 rounded-3xl product-card">
-                            <div class="h-44 rounded-2xl bg-slate-800 mb-4 overflow-hidden">
-                                <img src="${item.img}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
-                            </div>
+                        <div class="glass p-5 rounded-3xl hover:scale-105 transition duration-300">
+                            <img src="${item.img}" class="w-full h-44 object-cover rounded-2xl mb-4" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                             <h3 class="text-lg font-semibold truncate">${item.name}</h3>
-                            <p class="text-blue-400 font-bold text-xl mt-2">${Number(item.price).toLocaleString()} MMK</p>
-                            <button class="w-full mt-5 py-2.5 bg-blue-600/10 border border-blue-500/30 rounded-xl hover:bg-blue-600 hover:text-white transition-all font-medium">
-                                Add to Cart
-                            </button>
+                            <p class="text-blue-400 font-bold text-xl mt-2">${item.price} MMK</p>
+                            <button class="w-full mt-4 py-2 bg-blue-600/20 border border-blue-500/50 rounded-xl hover:bg-blue-600 transition">Buy Now</button>
                         </div>
                     `;
                 });
             } catch (error) {
-                grid.innerHTML = "<p class='col-span-full text-center text-red-400'>Error connecting to Database. Please try again.</p>";
-                console.error(error);
+                grid.innerHTML = "<p class='text-red-400'>Error loading data. Please refresh.</p>";
             }
         }
-
-        // ဝင်လာတာနဲ့ load လုပ်မယ်
         window.onload = loadProducts;
     </script>
 </body>
