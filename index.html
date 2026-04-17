@@ -124,7 +124,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9);
-            z-index: 200;
+            z-index: 9999;
             cursor: zoom-out;
             align-items: center;
             justify-content: center;
@@ -201,15 +201,15 @@
             <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span class="text-3xl">🛍️</span>
             </div>
-            <h3 class="text-2xl font-bold mb-2">မှာယူမည့်နည်းလမ်း</h3>
+            <h3 class="text-2xl font-bold mb-2 text-white">မှာယူမည့်နည်းလမ်း</h3>
             <p class="text-gray-400 text-sm mb-8">ဆက်သွယ်ရန် တစ်ခုခုကို ရွေးချယ်ပေးပါ</p>
             <div class="space-y-4">
                 <a href="viber://chat?number=+959953262080" class="flex items-center justify-center gap-3 w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Viber_logo_2018.png" class="w-6 h-6 object-contain" alt="Viber">
+                    <img src="https://img.icons8.com/color/48/viber.png" class="w-6 h-6 object-contain" alt="Viber">
                     Viber Chat
                 </a>
                 <a href="https://t.me/Mm9999ki" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-sky-600 hover:bg-sky-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-sky-500/20 active:scale-95">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="w-6 h-6" alt="Telegram">
+                    <img src="https://img.icons8.com/color/48/telegram-app.png" class="w-6 h-6" alt="Telegram">
                     Telegram Channel
                 </a>
             </div>
@@ -296,7 +296,7 @@
                                 ${Number(item.price).toLocaleString()} <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">MMK</span>
                             </p>
                             <div class="mt-auto flex gap-3">
-                                <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase tracking-widest">
+                                <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase tracking-widest text-white">
                                     Info
                                 </button>
                                 <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 active:scale-95 disabled:bg-gray-800 disabled:text-gray-500 disabled:shadow-none" ${isSold ? 'disabled' : ''}>
@@ -350,7 +350,7 @@
                                 <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No description provided.'}</p>
                             </div>
                         </div>
-                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-500/40 transition-all active:scale-95">
+                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-500/40 transition-all active:scale-95 text-white">
                             Confirm Order
                         </button>
                     </div>
