@@ -56,7 +56,7 @@
             const img = document.getElementById('pImg').value;
             const btn = document.getElementById('upBtn');
 
-            // မင်းရဲ့ Web App URL
+            // မင်းပေးထားတဲ့ URL ကို အောက်မှာ ထည့်ပေးထားပါတယ်
             const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
             if(!name || !price || !img) {
@@ -75,7 +75,7 @@
             };
 
             try {
-                // doPost function ဆီကို Data ပို့ခြင်း
+                // doPost ဆီသို့ data ပို့ခြင်း
                 await fetch(api_url, {
                     method: "POST",
                     mode: "no-cors",
@@ -84,16 +84,16 @@
                     body: JSON.stringify(data)
                 });
 
-                alert("✅ ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။ Google Sheet ထဲမှာ Data ရောက်မရောက် စစ်ဆေးပေးပါ။");
+                alert("✅ ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။ Sheet ထဲမှာ သွားစစ်ကြည့်ပါ!");
                 
-                // Form clear လုပ်မယ်
+                // Form ရှင်းထုတ်ခြင်း
                 document.getElementById('pName').value = "";
                 document.getElementById('pPrice').value = "";
                 document.getElementById('pImg').value = "";
 
             } catch (e) {
                 console.error("Error:", e);
-                alert("❌ တစ်ခုခုမှားနေပါတယ်။ URL သို့မဟုတ် Connection ကို ပြန်စစ်ပါ။");
+                alert("❌ အမှားအယွင်းတစ်ခု ရှိသွားပါတယ်။ ပြန်ကြိုးစားကြည့်ပါ။");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Upload Product";
