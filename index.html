@@ -17,10 +17,10 @@
             backdrop-filter: blur(12px); 
             border: 1px solid rgba(255, 255, 255, 0.1); 
         }
-        .product-card {
+        .product-Refresh {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .product-card:hover {
+        .product-Refresh:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
         }
@@ -30,6 +30,10 @@
         
         .contact-btn { transition: all 0.2s ease; }
         .contact-btn:hover { transform: scale(1.05); }
+
+        /* Refresh icon rotate animation */
+        .rotating { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -45,10 +49,7 @@
     <div class="max-w-7xl mx-auto p-8">
         <div class="flex justify-between items-center mb-10">
             <h2 class="text-3xl font-bold">Latest Products</h2>
-            <button onclick="loadProducts()" class="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-2">
-                🔄 Refresh
-            </button>
-        </div>
+            </div>
         
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
             <div class="col-span-full text-center py-20">
@@ -88,12 +89,14 @@
 
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
+            grid.style.opacity = "0.6"; // Loading ဖြစ်နေစဉ် အနည်းငယ်မှိန်ပြရန်
             
             try {
                 const response = await fetch(api_url);
                 const items = await response.json();
                 
                 grid.innerHTML = ""; 
+                grid.style.opacity = "1";
 
                 if (!items || items.length === 0) {
                     grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found in Database.</p>";
@@ -105,7 +108,11 @@
                     const productData = encodeURIComponent(JSON.stringify(item));
 
                     grid.innerHTML += `
-                        <div class="glass p-5 rounded-3xl product-card flex flex-col ${isSold ? 'opacity-75' : ''}">
+                        <div class="glass p-5 rounded-3xl product-card flex flex-col relative ${isSold ? 'opacity-75' : ''}">
+                            <button onclick="this.classList.add('rotating'); loadProducts();" class="absolute top-4 right-4 z-10 bg-black/40 hover:bg-black/60 p-2 rounded-full backdrop-blur-md transition-all">
+                                🔄
+                            </button>
+
                             <div class="w-full h-48 mb-4 overflow-hidden rounded-2xl bg-slate-800 relative">
                                 <img src="${item.img}" 
                                      class="w-full h-full object-cover block ${isSold ? 'grayscale' : ''}" 
@@ -139,6 +146,7 @@
             } catch (error) {
                 console.error("Error:", error);
                 grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-400">⚠️ Data ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+                grid.style.opacity = "1";
             }
         }
 
