@@ -118,25 +118,51 @@
             overflow-y: auto;
         }
 
-        /* Zoom Overlay Style */
+        /* --- Updated Zoom Overlay Style with Navigation --- */
         #zoomOverlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 9999;
-            cursor: zoom-out;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
+
         #zoomOverlay img {
-            max-width: 95%;
-            max-height: 95%;
+            max-width: 90%;
+            max-height: 85%;
             object-fit: contain;
             border-radius: 12px;
             animation: zoomIn 0.3s ease-out;
+            cursor: zoom-out;
         }
+
+        .zoom-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            user-select: none;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .zoom-nav:hover { background: rgba(59, 130, 246, 0.8); scale: 1.1; }
+        .zoom-nav.prev { left: 20px; }
+        .zoom-nav.next { right: 20px; }
+
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
@@ -184,8 +210,11 @@
         </div>
     </main>
 
-    <div id="zoomOverlay" onclick="closeZoom()">
-        <img id="zoomedImg" src="" alt="Zoomed Product">
+    <div id="zoomOverlay">
+        <div class="zoom-nav prev" onclick="changeZoomImg(-1)">❮</div>
+        <img id="zoomedImg" src="" onclick="closeZoom()" alt="Zoomed Product">
+        <div class="zoom-nav next" onclick="changeZoomImg(1)">❯</div>
+        <button onclick="closeZoom()" class="absolute top-8 right-8 text-white/50 hover:text-white text-3xl">✕</button>
     </div>
 
     <div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] hidden items-center justify-center p-4">
@@ -219,14 +248,43 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
         let allItems = [];
+        let currentZoomImages = [];
+        let currentZoomIndex = 0;
 
-        // Image Zoom Functions
-        function openZoom(src) {
+        // Updated Image Zoom Functions with Slider logic
+        function openZoom(images, index = 0) {
+            currentZoomImages = Array.isArray(images) ? images : [images];
+            currentZoomIndex = index;
+            
+            updateZoomUI();
+            
             const overlay = document.getElementById('zoomOverlay');
-            const img = document.getElementById('zoomedImg');
-            img.src = src;
             overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+        }
+
+        function updateZoomUI() {
+            const img = document.getElementById('zoomedImg');
+            img.src = currentZoomImages[currentZoomIndex];
+            
+            // Hide arrows if only one image exists
+            const prevBtn = document.querySelector('.zoom-nav.prev');
+            const nextBtn = document.querySelector('.zoom-nav.next');
+            
+            if(currentZoomImages.length <= 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            }
+        }
+
+        function changeZoomImg(direction) {
+            currentZoomIndex += direction;
+            if (currentZoomIndex >= currentZoomImages.length) currentZoomIndex = 0;
+            if (currentZoomIndex < 0) currentZoomIndex = currentZoomImages.length - 1;
+            updateZoomUI();
         }
 
         function closeZoom() {
@@ -235,6 +293,15 @@
                 document.body.style.overflow = 'auto';
             }
         }
+
+        // Keyboard support for Zoom
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('zoomOverlay').style.display === 'flex') {
+                if (e.key === "ArrowLeft") changeZoomImg(-1);
+                if (e.key === "ArrowRight") changeZoomImg(1);
+                if (e.key === "Escape") closeZoom();
+            }
+        });
 
         function syncAnnouncement() {
             const msg = localStorage.getItem('blitz_msg');
@@ -275,12 +342,15 @@
             items.forEach(item => {
                 const isSold = item.status === "Sold Out";
                 const productData = encodeURIComponent(JSON.stringify(item));
+                const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
+                const imgListJSON = JSON.stringify(imgList);
+
                 grid.innerHTML += `
                     <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''}">
                         <div class="w-full h-52 mb-5 overflow-hidden rounded-[24px] relative group">
                             <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest border border-white/10">${item.category || 'Luxury'}</span>
                             <img src="${item.img1}" 
-                                 onclick="openZoom('${item.img1}')"
+                                 onclick='openZoom(${imgListJSON}, 0)'
                                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" 
                                  alt="${item.name}"
                                  onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
@@ -327,9 +397,12 @@
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('modalContent');
             
-            let imagesHtml = `<img src="${item.img1}" class="slider-item" onclick="openZoom('${item.img1}')" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">`;
-            if(item.img2) imagesHtml += `<img src="${item.img2}" class="slider-item" onclick="openZoom('${item.img2}')">`;
-            if(item.img3) imagesHtml += `<img src="${item.img3}" class="slider-item" onclick="openZoom('${item.img3}')">`;
+            const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
+            const imgListJSON = JSON.stringify(imgList);
+
+            let imagesHtml = imgList.map((img, idx) => 
+                `<img src="${img}" class="slider-item" onclick='openZoom(${imgListJSON}, ${idx})' onerror="this.src='https://via.placeholder.com/300?text=No+Image'">`
+            ).join('');
 
             content.innerHTML = `
                 <div class="flex flex-col md:flex-row gap-8">
@@ -337,7 +410,7 @@
                         <div class="img-slider mb-4">
                             ${imagesHtml}
                         </div>
-                        ${item.img2 ? '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Swipe to view more ↔️ / Click to Zoom 🔍</p>' : '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Click Image to Zoom 🔍</p>'}
+                        ${imgList.length > 1 ? '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Swipe to view more ↔️ / Click to Zoom 🔍</p>' : '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Click Image to Zoom 🔍</p>'}
                     </div>
                     <div class="md:w-1/2 flex flex-col justify-between">
                         <div>
