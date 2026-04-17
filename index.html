@@ -24,6 +24,9 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.3);
         }
+        /* Modal Animation */
+        .modal-enter { animation: fadeIn 0.3s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -51,6 +54,13 @@
         </div>
     </div>
 
+    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden items-center justify-center p-5">
+        <div class="glass max-w-lg w-full p-8 rounded-[2.5rem] relative modal-enter">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
@@ -69,8 +79,8 @@
                 }
 
                 items.forEach(item => {
-                    // Sold Out ဖြစ်မဖြစ် စစ်ဆေးခြင်း
                     const isSold = item.status === "Sold Out";
+                    const productData = encodeURIComponent(JSON.stringify(item));
 
                     grid.innerHTML += `
                         <div class="glass p-5 rounded-3xl product-card flex flex-col ${isSold ? 'opacity-75' : ''}">
@@ -92,23 +102,57 @@
                                     ${Number(item.price).toLocaleString()} <span class="text-xs text-gray-400">MMK</span>
                                 </p>
                                 
-                                <button class="w-full mt-auto pt-5" ${isSold ? 'disabled' : ''}>
-                                    <div class="w-full py-3 ${isSold ? 'bg-gray-700 border-gray-600 cursor-not-allowed text-gray-400' : 'bg-blue-600 border-blue-500 hover:bg-blue-500 text-white'} border rounded-xl transition-all font-bold text-center">
+                                <div class="mt-auto pt-5 flex gap-2">
+                                    <button onclick="showDetails('${productData}')" class="flex-1 py-3 bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 transition-all font-bold text-sm">
+                                        Details
+                                    </button>
+                                    <button class="flex-[2] py-3 ${isSold ? 'bg-gray-700 border-gray-600 cursor-not-allowed text-gray-400' : 'bg-blue-600 border-blue-500 hover:bg-blue-500 text-white'} border rounded-xl transition-all font-bold text-center" ${isSold ? 'disabled' : ''}>
                                         ${isSold ? 'Sold Out' : 'Buy Now'}
-                                    </div>
-                                </button>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     `;
                 });
             } catch (error) {
                 console.error("Error:", error);
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-10 text-red-400">
-                        ⚠️ Data ချိတ်ဆက်မှု အဆင်မပြေပါ။
-                    </div>
-                `;
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-red-400">⚠️ Data ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
             }
+        }
+
+        function showDetails(encodedData) {
+            const item = JSON.parse(decodeURIComponent(encodedData));
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <img src="${item.img}" class="w-full h-64 object-cover rounded-3xl mb-6 shadow-xl border border-white/10">
+                <h2 class="text-2xl font-bold mb-1 text-white">${item.name}</h2>
+                <p class="text-blue-400 font-bold text-2xl mb-4">${Number(item.price).toLocaleString()} MMK</p>
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 max-h-40 overflow-y-auto mb-6">
+                    <p class="text-gray-300 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No details provided.'}</p>
+                </div>
+                <button class="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-bold shadow-lg shadow-blue-900/40 transition-all active:scale-95">
+                    Order via Messenger
+                </button>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Stop scrolling
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+
+        // Close modal when clicking outside the box
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            if (event.target == modal) closeModal();
         }
 
         window.onload = loadProducts;
