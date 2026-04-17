@@ -235,7 +235,6 @@
             });
         }
 
-        // Updated Web App Link
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
         
         let allItems = [];
@@ -282,14 +281,17 @@
                 const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
                 const imgListJSON = JSON.stringify(imgList);
 
-                const originalPrice = Number(item.price); // Sheet ထဲက 60000 ကို Original Price အဖြစ်ယူ
-                const discountPercent = Number(item.discount) || 0;
+                const originalPrice = Number(item.price); 
+                const discountValue = Number(item.discount) || 0; // Column M (discount) ကိုယူသည်
                 let discountHTML = '';
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
-                if (discountPercent > 0) {
-                    // 50% လျှော့ထားတဲ့ အရောင်းဈေးကို တွက်ချက်ခြင်း
-                    const salePrice = Math.round(originalPrice * (1 - (discountPercent / 100)));
+                if (discountValue > 0) {
+                    // Discount တွက်ချက်ခြင်း (Original Price - Discount Amount)
+                    const salePrice = originalPrice - discountValue;
+                    // Discount Percentage တွက်ချက်ခြင်း (Badge မှာပြရန်)
+                    const discountPercent = Math.round((discountValue / originalPrice) * 100);
+                    
                     discountHTML = `<div class="discount-badge">-${discountPercent}%</div>`;
                     priceDisplay = `
                         <div class="mb-6">
@@ -335,11 +337,11 @@
             const imgListJSON = JSON.stringify(imgList);
 
             const originalPrice = Number(item.price);
-            const discountPercent = Number(item.discount) || 0;
+            const discountValue = Number(item.discount) || 0;
             let detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
             
-            if (discountPercent > 0) {
-                const salePrice = Math.round(originalPrice * (1 - (discountPercent / 100)));
+            if (discountValue > 0) {
+                const salePrice = originalPrice - discountValue;
                 detailPriceHTML = `
                     <div class="mb-6">
                         <span class="text-gray-500 text-sm line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
