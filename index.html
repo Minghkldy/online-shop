@@ -18,7 +18,7 @@
             overflow-x: hidden;
         }
 
-        /* --- Announcement CSS (Updated for Mobile) --- */
+        /* --- Announcement CSS --- */
         .nav-marquee-container {
             flex-grow: 1;
             overflow: hidden;
@@ -29,15 +29,14 @@
             display: none; 
         }
 
-        /* ဖုန်းဆိုဒ်အတွက် ပြင်ဆင်ချက် */
         @media (max-width: 768px) {
             nav {
-                flex-wrap: wrap; /* Navbar ကို အတန်းဆင်းခွင့်ပြုမယ် */
+                flex-wrap: wrap;
                 gap: 10px;
                 padding: 15px !important;
             }
             .nav-marquee-container {
-                order: 3; /* Announcement ကို အောက်ဆုံးအတန်းကို ပို့မယ် */
+                order: 3;
                 width: 100%;
                 margin: 5px 0 0 0;
                 flex-grow: 0;
@@ -123,15 +122,9 @@
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-
-        .modal-content-wrapper {
-            max-height: 85vh;
-            overflow-y: auto;
-        }
 
         #zoomOverlay {
             display: none;
@@ -168,15 +161,8 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            user-select: none;
             font-size: 20px;
-            backdrop-filter: blur(10px);
         }
-
-        .zoom-nav:hover { background: rgba(59, 130, 246, 0.8); scale: 1.1; }
-        .zoom-nav.prev { left: 20px; }
-        .zoom-nav.next { right: 20px; }
-
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
@@ -192,7 +178,7 @@
         </div>
 
         <div class="flex items-center gap-4 flex-shrink-0">
-            <button id="navRefreshBtn" onclick="loadProducts()" class="glass hover:bg-white/10 px-6 py-2.5 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 border border-white/10">
+            <button onclick="loadProducts()" class="glass hover:bg-white/10 px-6 py-2.5 rounded-2xl text-sm font-bold transition-all flex items-center gap-2 border border-white/10">
                 <span id="refreshIcon">🔄</span> Update
             </button>
         </div>
@@ -216,44 +202,37 @@
         
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
             <div class="col-span-full text-center py-32">
-                <div class="inline-block p-4 rounded-full bg-blue-500/10 mb-4">
-                    <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
             </div>
         </div>
     </main>
 
     <div id="zoomOverlay">
-        <div class="zoom-nav prev" onclick="changeZoomImg(-1)">❮</div>
+        <div class="zoom-nav left-5" onclick="changeZoomImg(-1)" style="left:20px">❮</div>
         <img id="zoomedImg" src="" onclick="closeZoom()" alt="Zoomed Product">
-        <div class="zoom-nav next" onclick="changeZoomImg(1)">❯</div>
-        <button onclick="closeZoom()" class="absolute top-8 right-8 text-white/50 hover:text-white text-3xl">✕</button>
+        <div class="zoom-nav right-5" onclick="changeZoomImg(1)" style="right:20px">❯</div>
     </div>
 
     <div id="detailModal" class="fixed inset-0 bg-black/60 backdrop-blur-xl z-[100] hidden items-center justify-center p-4">
         <div class="glass max-w-2xl w-full p-2 rounded-[40px] relative overflow-hidden border border-white/10">
             <button onclick="closeModal()" class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-black/20 hover:bg-red-500/80 rounded-full text-white transition-all z-[110] backdrop-blur-md">✕</button>
-            <div id="modalContent" class="p-6 modal-content-wrapper"></div>
+            <div id="modalContent" class="p-6 max-h-[85vh] overflow-y-auto no-scrollbar"></div>
         </div>
     </div>
 
     <div id="contactModal" class="fixed inset-0 bg-black/80 backdrop-blur-2xl z-[120] hidden items-center justify-center p-6">
         <div class="glass max-w-sm w-full p-10 rounded-[40px] relative text-center border-white/10">
             <button onclick="closeContactModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors">✕</button>
-            <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span class="text-3xl">🛍️</span>
-            </div>
+            <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-3xl">🛍️</span></div>
             <h3 class="text-2xl font-bold mb-2 text-white">မှာယူမည့်နည်းလမ်း</h3>
             <p class="text-gray-400 text-sm mb-8">ဆက်သွယ်ရန် တစ်ခုခုကို ရွေးချယ်ပေးပါ</p>
             <div class="space-y-4">
-                <a href="viber://chat?number=+959953262080" class="flex items-center justify-center gap-3 w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-indigo-500/20 active:scale-95">
-                    <img src="https://img.icons8.com/color/48/viber.png" class="w-6 h-6 object-contain" alt="Viber">
-                    Viber Chat
+                <a href="viber://chat?number=+959953262080" class="flex items-center justify-center gap-3 w-full py-4 bg-indigo-600 hover:bg-indigo-500 rounded-2xl font-bold text-white transition-all active:scale-95">
+                    <img src="https://img.icons8.com/color/48/viber.png" class="w-6 h-6" alt="Viber"> Viber Chat
                 </a>
-                <a href="https://t.me/Mm9999ki" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-sky-600 hover:bg-sky-500 rounded-2xl font-bold text-white transition-all shadow-lg shadow-sky-500/20 active:scale-95">
-                    <img src="https://img.icons8.com/color/48/telegram-app.png" class="w-6 h-6" alt="Telegram">
-                    Telegram Channel
+                <a href="https://t.me/Mm9999ki" target="_blank" class="flex items-center justify-center gap-3 w-full py-4 bg-sky-600 hover:bg-sky-500 rounded-2xl font-bold text-white transition-all active:scale-95">
+                    <img src="https://img.icons8.com/color/48/telegram-app.png" class="w-6 h-6" alt="Telegram"> Telegram Channel
                 </a>
             </div>
         </div>
@@ -265,75 +244,29 @@
         let currentZoomImages = [];
         let currentZoomIndex = 0;
 
-        function openZoom(images, index = 0) {
-            currentZoomImages = Array.isArray(images) ? images : [images];
-            currentZoomIndex = index;
-            updateZoomUI();
-            const overlay = document.getElementById('zoomOverlay');
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function updateZoomUI() {
-            const img = document.getElementById('zoomedImg');
-            img.src = currentZoomImages[currentZoomIndex];
-            const prevBtn = document.querySelector('.zoom-nav.prev');
-            const nextBtn = document.querySelector('.zoom-nav.next');
-            if(currentZoomImages.length <= 1) {
-                prevBtn.style.display = 'none';
-                nextBtn.style.display = 'none';
-            } else {
-                prevBtn.style.display = 'flex';
-                nextBtn.style.display = 'flex';
-            }
-        }
-
-        function changeZoomImg(direction) {
-            currentZoomIndex += direction;
-            if (currentZoomIndex >= currentZoomImages.length) currentZoomIndex = 0;
-            if (currentZoomIndex < 0) currentZoomIndex = currentZoomImages.length - 1;
-            updateZoomUI();
-        }
-
-        function closeZoom() {
-            document.getElementById('zoomOverlay').style.display = 'none';
-            if (!document.getElementById('detailModal').classList.contains('flex')) {
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (document.getElementById('zoomOverlay').style.display === 'flex') {
-                if (e.key === "ArrowLeft") changeZoomImg(-1);
-                if (e.key === "ArrowRight") changeZoomImg(1);
-                if (e.key === "Escape") closeZoom();
-            }
-        });
-
-        function syncAnnouncement() {
-            const msg = localStorage.getItem('blitz_msg');
-            const isActive = localStorage.getItem('blitz_active') === 'true';
-            const box = document.getElementById('marquee-box');
-            const content = document.getElementById('marquee-content');
-            if (isActive && msg) {
-                content.innerText = msg;
-                box.style.display = "block";
-            } else {
-                box.style.display = "none";
-            }
-        }
-
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
             if(refreshIcon) refreshIcon.classList.add('rotating');
+            
             try {
                 const response = await fetch(api_url);
-                allItems = await response.json();
+                const data = await response.json();
+                
+                // Announcement Sync
+                const box = document.getElementById('marquee-box');
+                const content = document.getElementById('marquee-content');
+                if (data.isActive && data.announcement) {
+                    content.innerText = data.announcement;
+                    box.style.display = "block";
+                } else {
+                    box.style.display = "none";
+                }
+
+                allItems = data.products || data;
                 displayProducts(allItems);
             } catch (error) {
-                console.error("Error:", error);
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။ ခဏနေမှ ပြန်ကြိုးစားပေးပါ။</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('rotating');
             }
@@ -343,7 +276,7 @@
             const grid = document.getElementById('product-grid');
             grid.innerHTML = ""; 
             if (!items || items.length === 0) {
-                grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found in this category.</p>";
+                grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
                 return;
             }
             items.forEach(item => {
@@ -355,30 +288,16 @@
                 grid.innerHTML += `
                     <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''}">
                         <div class="w-full h-52 mb-5 overflow-hidden rounded-[24px] relative group">
-                            <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase tracking-widest border border-white/10">${item.category || 'Luxury'}</span>
-                            <img src="${item.img1}" 
-                                 onclick='openZoom(${imgListJSON}, 0)'
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" 
-                                 alt="${item.name}"
-                                 onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
-                            ${isSold ? `
-                                <div class="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-                                    <span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs tracking-tighter uppercase shadow-2xl">Sold Out</span>
-                                </div>
-                            ` : ''}
+                            <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase border border-white/10">${item.category || 'Luxury'}</span>
+                            <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                            ${isSold ? `<div class="absolute inset-0 flex items-center justify-center bg-black/40"><span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs uppercase">Sold Out</span></div>` : ''}
                         </div>
                         <div class="px-2 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold truncate text-white mb-2">${item.name}</h3>
-                            <p class="text-blue-400 font-black text-2xl mb-6">
-                                ${Number(item.price).toLocaleString()} <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">MMK</span>
-                            </p>
+                            <p class="text-blue-400 font-black text-2xl mb-6">${Number(item.price).toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>
                             <div class="mt-auto flex gap-3">
-                                <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase tracking-widest text-white">
-                                    Info
-                                </button>
-                                <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20 active:scale-95 disabled:bg-gray-800 disabled:text-gray-500 disabled:shadow-none" ${isSold ? 'disabled' : ''}>
-                                    ${isSold ? 'Sold Out' : 'Order Now'}
-                                </button>
+                                <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase text-white">Info</button>
+                                <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase" ${isSold ? 'disabled' : ''}>${isSold ? 'Sold Out' : 'Order Now'}</button>
                             </div>
                         </div>
                     </div>
@@ -389,50 +308,36 @@
         function filterProducts(category, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            if (category === 'All') {
-                displayProducts(allItems);
-                document.getElementById('grid-title').innerText = "Latest Products";
-            } else {
-                const filtered = allItems.filter(item => item.category === category);
-                displayProducts(filtered);
-                document.getElementById('grid-title').innerText = category;
-            }
+            const filtered = category === 'All' ? allItems : allItems.filter(item => item.category === category);
+            displayProducts(filtered);
+            document.getElementById('grid-title').innerText = category === 'All' ? "Latest Products" : category;
         }
 
         function showDetails(encodedData) {
             const item = JSON.parse(decodeURIComponent(encodedData));
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('modalContent');
-            
             const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
             const imgListJSON = JSON.stringify(imgList);
-
-            let imagesHtml = imgList.map((img, idx) => 
-                `<img src="${img}" class="slider-item" onclick='openZoom(${imgListJSON}, ${idx})' onerror="this.src='https://via.placeholder.com/300?text=No+Image'">`
-            ).join('');
 
             content.innerHTML = `
                 <div class="flex flex-col md:flex-row gap-8">
                     <div class="md:w-1/2">
                         <div class="img-slider mb-4">
-                            ${imagesHtml}
+                            ${imgList.map((img, idx) => `<img src="${img}" class="slider-item" onclick='openZoom(${imgListJSON}, ${idx})' onerror="this.src='https://via.placeholder.com/300?text=No+Image'">`).join('')}
                         </div>
-                        ${imgList.length > 1 ? '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Swipe to view more ↔️ / Click to Zoom 🔍</p>' : '<p class="text-[10px] text-gray-500 text-center font-bold tracking-widest uppercase mb-4">Click Image to Zoom 🔍</p>'}
+                        <p class="text-[10px] text-gray-500 text-center font-bold uppercase mb-4">Swipe to view more ↔️ / Click to Zoom 🔍</p>
                     </div>
                     <div class="md:w-1/2 flex flex-col justify-between">
                         <div>
-                            <span class="text-blue-500 font-bold text-xs uppercase tracking-[0.2em] mb-2">${item.category || 'Luxury'}</span>
+                            <span class="text-blue-500 font-bold text-xs uppercase tracking-widest mb-2">${item.category || 'Luxury'}</span>
                             <h2 class="text-3xl font-black mb-3 text-white leading-tight">${item.name}</h2>
-                            <div class="flex items-center gap-3 mb-6">
-                               <p class="text-blue-400 font-black text-3xl">${Number(item.price).toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>
-                            </div>
+                            <p class="text-blue-400 font-black text-3xl mb-6">${Number(item.price).toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>
                             <div class="bg-white/5 p-6 rounded-[24px] border border-white/5 h-40 overflow-y-auto mb-8 no-scrollbar">
                                 <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No description provided.'}</p>
                             </div>
                         </div>
-                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-blue-500/40 transition-all active:scale-95 text-white">
-                            Confirm Order
-                        </button>
+                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-widest text-white active:scale-95 transition-all">Confirm Order</button>
                     </div>
                 </div>
             `;
@@ -440,32 +345,24 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() {
-            const modal = document.getElementById('detailModal');
-            modal.classList.add('hidden'); modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
+        function openZoom(images, index = 0) {
+            currentZoomImages = Array.isArray(images) ? images : [images];
+            currentZoomIndex = index;
+            document.getElementById('zoomedImg').src = currentZoomImages[currentZoomIndex];
+            document.getElementById('zoomOverlay').style.display = 'flex';
         }
 
-        function openContactModal() {
-            document.getElementById('contactModal').classList.remove('hidden');
-            document.getElementById('contactModal').classList.add('flex');
+        function changeZoomImg(dir) {
+            currentZoomIndex = (currentZoomIndex + dir + currentZoomImages.length) % currentZoomImages.length;
+            document.getElementById('zoomedImg').src = currentZoomImages[currentZoomIndex];
         }
 
-        function closeContactModal() {
-            document.getElementById('contactModal').classList.add('hidden');
-            document.getElementById('contactModal').classList.remove('flex');
-        }
+        function closeZoom() { document.getElementById('zoomOverlay').style.display = 'none'; }
+        function closeModal() { document.getElementById('detailModal').classList.add('hidden'); document.body.style.overflow = 'auto'; }
+        function openContactModal() { document.getElementById('contactModal').classList.remove('hidden'); document.getElementById('contactModal').classList.add('flex'); }
+        function closeContactModal() { document.getElementById('contactModal').classList.add('hidden'); }
 
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('detailModal')) closeModal();
-            if (event.target == document.getElementById('contactModal')) closeContactModal();
-        }
-
-        window.onload = () => {
-            syncAnnouncement();
-            loadProducts();
-            window.addEventListener('storage', syncAnnouncement);
-        };
+        window.onload = loadProducts;
     </script>
 </body>
 </html>
