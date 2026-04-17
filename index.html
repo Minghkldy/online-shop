@@ -282,19 +282,18 @@
                 const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
                 const imgListJSON = JSON.stringify(imgList);
 
-                // --- Improved Discount Display Logic ---
                 const price = Number(item.price);
                 const discountPercent = Number(item.discount) || 0;
                 let discountHTML = '';
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${price.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
                 if (discountPercent > 0) {
-                    // Calculate original price for display
+                    // လျှော့ဈေးကို အသုံးပြုပြီး မူလဈေးကို ပြန်တွက်ခြင်း
                     const originalPrice = Math.round(price / (1 - (discountPercent / 100)));
-                    discountHTML = `<div class="discount-badge">${discountPercent}% OFF</div>`;
+                    discountHTML = `<div class="discount-badge">-${discountPercent}%</div>`;
                     priceDisplay = `
                         <div class="mb-6">
-                            <span class="text-gray-500 text-xs line-through block">${originalPrice.toLocaleString()} MMK</span>
+                            <span class="text-gray-500 text-xs line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
                             <span class="text-blue-400 font-black text-2xl">${price.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></span>
                         </div>`;
                 }
@@ -343,7 +342,7 @@
                 const originalPrice = Math.round(price / (1 - (discountPercent / 100)));
                 detailPriceHTML = `
                     <div class="mb-6">
-                        <span class="text-gray-500 text-sm line-through block">${originalPrice.toLocaleString()} MMK</span>
+                        <span class="text-gray-500 text-sm line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
                         <span class="text-blue-400 font-black text-3xl">${price.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></span>
                     </div>`;
             }
