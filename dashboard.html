@@ -8,8 +8,8 @@
     <style>
         body { background: #020617; color: white; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; font-family: 'Inter', sans-serif; padding: 40px 20px; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        input, textarea { transition: all 0.3s ease; }
-        input:focus, textarea:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        input, textarea, select { transition: all 0.3s ease; }
+        input:focus, textarea:focus, select:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
     </style>
 </head>
 <body>
@@ -20,10 +20,24 @@
         </div>
 
         <div class="space-y-4">
-            <div>
-                <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Name</label>
-                <input type="text" id="pName" placeholder="e.g. Gaming Mouse" 
-                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Name</label>
+                    <input type="text" id="pName" placeholder="e.g. Gaming Mouse" 
+                        class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Category</label>
+                    <select id="pCat" class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                        <option value="Clothing">Clothing</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Gadgets">Gadgets</option>
+                        <option value="Shoes">Shoes</option>
+                        <option value="Cosmetics">Cosmetics</option>
+                        <option value="Food">Food</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
             </div>
 
             <div>
@@ -35,22 +49,13 @@
             <div>
                 <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Details</label>
                 <textarea id="pDesc" placeholder="Describe the product features..." 
-                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white h-24 resize-none"></textarea>
+                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white h-20 resize-none"></textarea>
             </div>
 
             <div class="grid grid-cols-1 gap-3">
-                <div>
-                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 1 (Main)</label>
-                    <input type="text" id="pImg1" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 2</label>
-                    <input type="text" id="pImg2" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 3</label>
-                    <input type="text" id="pImg3" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
-                </div>
+                <input type="text" id="pImg1" placeholder="Image URL 1 (Main)" class="w-full bg-slate-900/50 p-3 rounded-xl outline-none border border-slate-800 text-white text-xs">
+                <input type="text" id="pImg2" placeholder="Image URL 2" class="w-full bg-slate-900/50 p-3 rounded-xl outline-none border border-slate-800 text-white text-xs">
+                <input type="text" id="pImg3" placeholder="Image URL 3" class="w-full bg-slate-900/50 p-3 rounded-xl outline-none border border-slate-800 text-white text-xs">
             </div>
 
             <button id="upBtn" onclick="addProduct()" 
@@ -89,13 +94,14 @@
                     card.className = `glass p-4 rounded-3xl border ${isSold ? 'border-red-900 opacity-75' : 'border-slate-800'} flex flex-col items-center text-center relative`;
                     
                     card.innerHTML = `
+                        <span class="absolute top-2 left-2 bg-blue-600/80 backdrop-blur text-[8px] px-2 py-1 rounded-full uppercase font-bold">${item.category || 'Other'}</span>
                         <img src="${item.img1}" class="w-full h-32 object-cover rounded-2xl mb-3 shadow-inner ${isSold ? 'grayscale' : ''}">
                         <h3 class="font-bold text-sm truncate w-full text-gray-100">${item.name}</h3>
                         <p class="text-blue-400 text-xs mt-1 font-bold">${item.price} MMK</p>
                         <div class="mt-4 flex gap-2 w-full">
                             ${!isSold ? 
                                 `<button onclick="updateStatus(${item.row}, 'markSold')" class="flex-1 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white text-[10px] py-2 rounded-xl transition-all">Mark Sold</button>` 
-                                : `<span class="flex-1 bg-red-900/30 text-red-500 text-[10px] py-2 rounded-xl font-bold italic">Sold Out</span>`
+                                : `<span class="flex-1 bg-red-900/30 text-red-500 text-[10px] py-2 rounded-xl font-bold italic text-center leading-loose">Sold Out</span>`
                             }
                             <button onclick="updateStatus(${item.row}, 'delete')" class="flex-1 bg-slate-800 hover:bg-gray-700 text-gray-400 text-[10px] py-2 rounded-xl transition-all">Delete</button>
                         </div>
@@ -127,13 +133,14 @@
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
             const desc = document.getElementById('pDesc').value;
+            const category = document.getElementById('pCat').value;
             const img1 = document.getElementById('pImg1').value;
             const img2 = document.getElementById('pImg2').value;
             const img3 = document.getElementById('pImg3').value;
             const btn = document.getElementById('upBtn');
 
             if(!name || !price || !img1 || !desc) {
-                alert("အနည်းဆုံး အမည်၊ စျေးနှုန်း၊ Details နှင့် ပုံ(၁) တို့ကို ဖြည့်ပေးပါဗျ။");
+                alert("အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါဗျ။");
                 return;
             }
 
@@ -141,7 +148,7 @@
             btn.innerText = "Processing...";
             btn.style.opacity = "0.6";
 
-            const data = { name, price, desc, img1, img2, img3 };
+            const data = { name, price, desc, category, img1, img2, img3 };
 
             try {
                 await fetch(api_url, {
