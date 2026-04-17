@@ -3,53 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Blitz Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #0f172a; color: white; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { background: #020617; color: white; min-height: 100vh; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        input { transition: all 0.2s; }
+        input:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
     </style>
 </head>
-<body class="p-8">
-    <div class="max-w-2xl mx-auto">
-        <h1 class="text-2xl font-bold mb-6 text-blue-400">Admin Dashboard - ပစ္စည်းအသစ်တင်ရန်</h1>
-        
-        <div class="glass p-6 rounded-2xl space-y-4">
-            <div>
-                <label class="block text-sm mb-1">ပစ္စည်းအမည်</label>
-                <input type="text" id="pName" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500">
-            </div>
-            <div>
-                <label class="block text-sm mb-1">ဈေးနှုန်း (MMK)</label>
-                <input type="text" id="pPrice" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500">
-            </div>
-            <div>
-                <label class="block text-sm mb-1">ပုံ Link (URL)</label>
-                <input type="text" id="pImg" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500" placeholder="https://...">
-            </div>
-            <button onclick="addProduct()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition">
-                Upload Product
-            </button>
+<body class="flex items-center justify-center p-6">
+    <div class="max-w-md w-full">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-blue-500">ADMIN PANEL</h1>
+            <p class="text-gray-400 mt-2">ပစ္စည်းအသစ်များကို Google Sheet သို့ တင်ရန်</p>
         </div>
 
-        <div class="mt-10">
-            <h2 class="text-xl mb-4">လက်ရှိတင်ထားသော ပစ္စည်းများ</h2>
-            <div id="admin-list" class="space-y-2">
+        <div class="glass p-8 rounded-[2rem] shadow-2xl">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1.5">Product Name</label>
+                    <input type="text" id="pName" placeholder="ဥပမာ - iPhone 15 Pro" 
+                        class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl outline-none text-white">
                 </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1.5">Price (MMK)</label>
+                    <input type="number" id="pPrice" placeholder="ဥပမာ - 55000" 
+                        class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl outline-none text-white">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-1.5">Image URL</label>
+                    <input type="text" id="pImg" placeholder="https://image-link.com/photo.jpg" 
+                        class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl outline-none text-white">
+                </div>
+
+                <button id="uploadBtn" onclick="addProduct()" 
+                    class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 py-4 rounded-2xl font-bold text-lg shadow-lg shadow-blue-900/20 transition-all active:scale-95">
+                    Upload Product
+                </button>
+            </div>
         </div>
+
+        <p class="text-center mt-8 text-gray-500 text-xs uppercase tracking-widest">Powered by Google Sheets & GitHub</p>
     </div>
 
     <script>
-        function addProduct() {
+        async function addProduct() {
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
             const img = document.getElementById('pImg').value;
+            const btn = document.getElementById('uploadBtn');
+            
+            const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiUVhpGviZUCKt8moBnAE6RY9HdAHVr/exec";
 
-            if(name && price && img) {
-                alert("ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။ (မှတ်ချက် - GitHub Pages သည် Static ဖြစ်သောကြောင့် Data သိမ်းရန် Backend လိုအပ်ပါသည်။ အခုလောလောဆယ် UI ကို အရင်ကြည့်ပါမယ်)");
-                // ဒီနေရာမှာ နောက်ပိုင်း Database နဲ့ ချိတ်ဖို့ Code ထည့်ပါမယ်
-            } else {
-                alert("အချက်အလက် အကုန်ဖြည့်ပါ");
+            if(!name || !price || !img) {
+                alert("ကျေးဇူးပြု၍ အချက်အလက်အားလုံး ဖြည့်သွင်းပါ");
+                return;
+            }
+
+            // Button Loading State
+            btn.disabled = true;
+            btn.innerText = "Uploading... Please wait";
+            btn.classList.add('opacity-50');
+
+            try {
+                await fetch(api_url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ name, price, img })
+                });
+
+                alert("ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။");
+                // Input တွေကို ရှင်းထုတ်ခြင်း
+                document.getElementById('pName').value = "";
+                document.getElementById('pPrice').value = "";
+                document.getElementById('pImg').value = "";
+            } catch (error) {
+                alert("Error: " + error);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Upload Product";
+                btn.classList.remove('opacity-50');
             }
         }
     </script>
