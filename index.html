@@ -302,11 +302,12 @@
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
                 if (discountValue > 0) {
-                    const salePrice = originalPrice - discountValue;
-                    // --- Fix: Calculation change to (Discount / Original) * 100 ---
-                    const discountPercent = Math.round((discountValue / originalPrice) * 100);
+                    // --- Fixed Logic: Percentage calculation ---
+                    // Website မှာ Discount % ပြချင်ရင် Formula က: Price * (Percentage/100)
+                    const discountAmt = Math.round(originalPrice * (discountValue / 100));
+                    const salePrice = originalPrice - discountAmt;
                     
-                    discountHTML = `<div class="discount-badge">-${discountPercent}%</div>`;
+                    discountHTML = `<div class="discount-badge">-${discountValue}%</div>`;
                     priceDisplay = `
                         <div class="mb-6">
                             <span class="text-gray-500 text-xs line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
@@ -355,7 +356,10 @@
             let detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
             
             if (discountValue > 0) {
-                const salePrice = originalPrice - discountValue;
+                // --- Fixed Logic: Percentage calculation ---
+                const discountAmt = Math.round(originalPrice * (discountValue / 100));
+                const salePrice = originalPrice - discountAmt;
+
                 detailPriceHTML = `
                     <div class="mb-6">
                         <span class="text-gray-500 text-sm line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
