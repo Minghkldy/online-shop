@@ -189,11 +189,7 @@
         </div>
         
         <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-            <div class="col-span-full text-center py-32">
-                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
             </div>
-        </div>
     </main>
 
     <div id="zoomOverlay">
@@ -244,27 +240,54 @@
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
+            
+            // ၁။ အရင်ဆုံး Local Storage ထဲမှာ data ရှိမရှိစစ်ပြီး ရှိရင် အရင်ပြထားမယ်
+            const cachedData = localStorage.getItem('blitz_products');
+            if (cachedData && allItems.length === 0) {
+                const data = JSON.parse(cachedData);
+                allItems = data.products || data;
+                displayProducts(allItems);
+                handleMarquee(data);
+            } else if (allItems.length === 0) {
+                // ဘာ data မှ မရှိသေးရင် loading ပြမယ်
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-32">
+                        <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
+                    </div>`;
+            }
+
             if(refreshIcon) refreshIcon.classList.add('rotating');
             
             try {
                 const response = await fetch(api_url);
                 const data = await response.json();
                 
-                const box = document.getElementById('marquee-box');
-                const content = document.getElementById('marquee-content');
-                if (data.isActive && data.announcement) {
-                    content.innerText = data.announcement;
-                    box.style.display = "block";
-                } else {
-                    box.style.display = "none";
-                }
+                // ၂။ Database ကနေ data ရလာရင် Local Storage မှာ အသစ်လဲပြီး Update လုပ်မယ်
+                localStorage.setItem('blitz_products', JSON.stringify(data));
+                
+                handleMarquee(data);
 
                 allItems = data.products || data;
                 displayProducts(allItems);
             } catch (error) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+                if (allItems.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+                }
+                console.error("Fetch error:", error);
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('rotating');
+            }
+        }
+
+        function handleMarquee(data) {
+            const box = document.getElementById('marquee-box');
+            const content = document.getElementById('marquee-content');
+            if (data.isActive && data.announcement) {
+                content.innerText = data.announcement;
+                box.style.display = "block";
+            } else {
+                box.style.display = "none";
             }
         }
 
@@ -282,14 +305,12 @@
                 const imgListJSON = JSON.stringify(imgList);
 
                 const originalPrice = Number(item.price); 
-                const discountValue = Number(item.discount) || 0; // Column M (discount) ကိုယူသည်
+                const discountValue = Number(item.discount) || 0;
                 let discountHTML = '';
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
                 if (discountValue > 0) {
-                    // Discount တွက်ချက်ခြင်း (Original Price - Discount Amount)
                     const salePrice = originalPrice - discountValue;
-                    // Discount Percentage တွက်ချက်ခြင်း (Badge မှာပြရန်)
                     const discountPercent = Math.round((discountValue / originalPrice) * 100);
                     
                     discountHTML = `<div class="discount-badge">-${discountPercent}%</div>`;
