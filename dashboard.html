@@ -58,7 +58,6 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
-        // Dashboard ပွင့်လာလျှင် ပစ္စည်းများချက်ချင်းပြရန်
         window.onload = loadProducts;
 
         async function loadProducts() {
@@ -71,17 +70,42 @@
                 grid.innerHTML = ''; 
 
                 data.forEach(item => {
+                    const isSold = item.status === "Sold Out";
                     const card = document.createElement('div');
-                    card.className = "glass p-4 rounded-3xl border border-slate-800 flex flex-col items-center text-center";
+                    card.className = `glass p-4 rounded-3xl border ${isSold ? 'border-red-900 opacity-75' : 'border-slate-800'} flex flex-col items-center text-center relative`;
+                    
                     card.innerHTML = `
-                        <img src="${item.img}" class="w-full h-32 object-cover rounded-2xl mb-3 shadow-inner">
+                        <img src="${item.img}" class="w-full h-32 object-cover rounded-2xl mb-3 shadow-inner ${isSold ? 'grayscale' : ''}">
                         <h3 class="font-bold text-sm truncate w-full text-gray-100">${item.name}</h3>
                         <p class="text-blue-400 text-xs mt-1 font-bold">${item.price} MMK</p>
+                        <div class="mt-4 flex gap-2 w-full">
+                            ${!isSold ? 
+                                `<button onclick="updateStatus(${item.row}, 'markSold')" class="flex-1 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white text-[10px] py-2 rounded-xl transition-all">Mark Sold</button>` 
+                                : `<span class="flex-1 bg-red-900/30 text-red-500 text-[10px] py-2 rounded-xl font-bold italic">Sold Out</span>`
+                            }
+                            <button onclick="updateStatus(${item.row}, 'delete')" class="flex-1 bg-slate-800 hover:bg-gray-700 text-gray-400 text-[10px] py-2 rounded-xl transition-all">Delete</button>
+                        </div>
                     `;
                     grid.appendChild(card);
                 });
             } catch (e) {
                 grid.innerHTML = '<p class="text-center col-span-full text-red-500">Failed to load data.</p>';
+            }
+        }
+
+        async function updateStatus(row, action) {
+            if(!confirm("Are you sure?")) return;
+            
+            try {
+                await fetch(api_url, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify({ action, row })
+                });
+                alert("Updated successfully!");
+                loadProducts();
+            } catch (e) {
+                alert("Error updating status");
             }
         }
 
@@ -117,7 +141,6 @@
                 document.getElementById('pPrice').value = "";
                 document.getElementById('pImg').value = "";
                 
-                // ပစ္စည်းအသစ်တင်ပြီးလျှင် စာရင်းကိုချက်ချင်း Update လုပ်ရန်
                 loadProducts();
 
             } catch (e) {
