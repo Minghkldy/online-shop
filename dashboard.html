@@ -10,9 +10,44 @@
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
         input, textarea, select { transition: all 0.3s ease; }
         input:focus, textarea:focus, select:focus { border-color: #3b82f6 !important; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+        
+        /* Toggle Switch Style */
+        .toggle-dot { transition: all 0.3s ease-in-out; }
+        input:checked ~ .toggle-dot { transform: translateX(100%); background-color: #3b82f6; }
     </style>
 </head>
 <body>
+    <div class="max-w-md w-full glass p-8 rounded-[2.5rem] shadow-2xl mb-6 border-blue-500/20">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="text-2xl">📢</span>
+            <h2 class="text-xl font-bold text-blue-400 uppercase tracking-wider">Announcement Bar</h2>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="text-xs text-gray-400 ml-2 mb-1 block">Message (စာသားပြေးရန်)</label>
+                <textarea id="annMsg" placeholder="ဥပမာ - ယနေ့ဝယ်ယူသူတိုင်းအတွက် 10% Discount ရှိသည်..." 
+                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm h-20 resize-none"></textarea>
+            </div>
+
+            <div class="flex items-center justify-between p-2">
+                <span class="text-sm text-gray-300">Show on Website</span>
+                <label for="annStatus" class="flex items-center cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" id="annStatus" class="sr-only">
+                        <div class="block bg-slate-800 w-14 h-8 rounded-full"></div>
+                        <div class="toggle-dot absolute left-1 top-1 bg-gray-400 w-6 h-6 rounded-full"></div>
+                    </div>
+                </label>
+            </div>
+
+            <button onclick="updateAnnouncement()" 
+                class="w-full bg-blue-600/20 text-blue-400 border border-blue-600/50 py-3 rounded-2xl font-bold hover:bg-blue-600 hover:text-white transition-all active:scale-95">
+                Update Announcement
+            </button>
+        </div>
+    </div>
+
     <div class="max-w-md w-full glass p-8 rounded-[2.5rem] shadow-2xl mb-12">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-blue-500 tracking-tight uppercase">Admin Panel</h1>
@@ -78,7 +113,23 @@
     <script>
         const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
-        window.onload = loadProducts;
+        // Announcement Logic
+        window.onload = () => {
+            loadProducts();
+            // Load saved announcement from LocalStorage
+            document.getElementById('annMsg').value = localStorage.getItem('blitz_msg') || "";
+            document.getElementById('annStatus').checked = localStorage.getItem('blitz_active') === 'true';
+        };
+
+        function updateAnnouncement() {
+            const msg = document.getElementById('annMsg').value;
+            const isActive = document.getElementById('annStatus').checked;
+
+            localStorage.setItem('blitz_msg', msg);
+            localStorage.setItem('blitz_active', isActive);
+
+            alert("✅ Announcement Updated! Website မှာ စာသားပြောင်းလဲသွားပါပြီ။");
+        }
 
         async function loadProducts() {
             const grid = document.getElementById('admin-product-grid');
