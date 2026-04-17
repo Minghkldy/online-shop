@@ -72,6 +72,9 @@
             border-color: #3b82f6;
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -89,13 +92,13 @@
     <div class="max-w-7xl mx-auto p-8">
         <div class="flex items-center gap-3 overflow-x-auto pb-6 mb-4 no-scrollbar" id="category-list">
             <button onclick="filterProducts('All', this)" class="cat-btn active">All</button>
+            <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn glass">လူကြီးကစားစရာအရုပ်</button>
             <button onclick="filterProducts('Clothing', this)" class="cat-btn glass">Clothing</button>
             <button onclick="filterProducts('Electronics', this)" class="cat-btn glass">Electronics</button>
             <button onclick="filterProducts('Gadgets', this)" class="cat-btn glass">Gadgets</button>
             <button onclick="filterProducts('Shoes', this)" class="cat-btn glass">Shoes</button>
             <button onclick="filterProducts('Cosmetics', this)" class="cat-btn glass">Cosmetics</button>
             <button onclick="filterProducts('Food', this)" class="cat-btn glass">Food</button>
-            <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn glass">လူကြီးကစားစရာအရုပ်</button>
         </div>
 
         <div class="flex justify-between items-center mb-10">
