@@ -15,7 +15,7 @@
 <body class="p-6">
     <div class="max-w-md w-full glass p-8 rounded-[2.5rem] shadow-2xl">
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-blue-500 tracking-tight">ADMIN PANEL</h1>
+            <h1 class="text-3xl font-bold text-blue-500 tracking-tight uppercase">Admin Panel</h1>
             <p class="text-gray-500 text-sm mt-2">Add new products to your store</p>
         </div>
 
@@ -34,7 +34,7 @@
 
             <div>
                 <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL</label>
-                <input type="text" id="pImg" placeholder="https://link-to-image.jpg" 
+                <input type="text" id="pImg" placeholder="https://via.placeholder.com/300" 
                     class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white">
             </div>
 
@@ -44,7 +44,7 @@
             </button>
             
             <a href="index.html" class="block text-center text-sm text-gray-500 hover:text-gray-300 mt-4">
-                ← Back to Store
+                ← Back to Store View
             </a>
         </div>
     </div>
@@ -56,7 +56,7 @@
             const img = document.getElementById('pImg').value;
             const btn = document.getElementById('upBtn');
 
-            // မင်းရဲ့ Web App URL (doGet/doPost ပါတဲ့ URL)
+            // မင်းရဲ့ Web App URL (doPost ပါတဲ့ URL အမှန်ဖြစ်ရပါမယ်)
             const api_url = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
             if(!name || !price || !img) {
@@ -65,30 +65,35 @@
             }
 
             btn.disabled = true;
-            btn.innerText = "Uploading... Please wait";
-            btn.style.opacity = "0.5";
+            btn.innerText = "Processing...";
+            btn.style.opacity = "0.6";
+
+            const data = {
+                name: name,
+                price: price,
+                img: img
+            };
 
             try {
-                // doPost ဆီကို Data ပို့မယ်
-                const response = await fetch(api_url, {
+                // Fetch request ကို သေချာအောင် စစ်မယ်
+                await fetch(api_url, {
                     method: "POST",
-                    mode: "no-cors", // Google Script အတွက် no-cors သုံးရပါတယ်
+                    mode: "no-cors",
                     cache: "no-cache",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, price, img })
+                    body: JSON.stringify(data)
                 });
 
-                // အောင်မြင်သွားရင်
-                alert("✅ ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။");
+                alert("✅ ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။ (Sheet ထဲမှာ သွားစစ်ကြည့်ပါ)");
                 
-                // Input တွေကို ပြန်ရှင်းမယ်
+                // Form clear လုပ်မယ်
                 document.getElementById('pName').value = "";
                 document.getElementById('pPrice').value = "";
                 document.getElementById('pImg').value = "";
 
             } catch (e) {
-                console.error(e);
-                alert("❌ အမှားအယွင်းတစ်ခု ရှိသွားပါတယ်။ ပြန်ကြိုးစားကြည့်ပါ။");
+                console.error("Error:", e);
+                alert("❌ တစ်ခုခုမှားနေပါတယ်။ URL နဲ့ Connection ပြန်စစ်ပါ။");
             } finally {
                 btn.disabled = false;
                 btn.innerText = "Upload Product";
