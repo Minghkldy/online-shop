@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f172a; color: white; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6 text-blue-400">Admin Dashboard - ပစ္စည်းအသစ်တင်ရန်</h1>
+        
+        <div class="glass p-6 rounded-2xl space-y-4">
+            <div>
+                <label class="block text-sm mb-1">ပစ္စည်းအမည်</label>
+                <input type="text" id="pName" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm mb-1">ဈေးနှုန်း (MMK)</label>
+                <input type="text" id="pPrice" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm mb-1">ပုံ Link (URL)</label>
+                <input type="text" id="pImg" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none focus:border-blue-500" placeholder="https://...">
+            </div>
+            <button onclick="addProduct()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-bold transition">
+                Upload Product
+            </button>
+        </div>
+
+        <div class="mt-10">
+            <h2 class="text-xl mb-4">လက်ရှိတင်ထားသော ပစ္စည်းများ</h2>
+            <div id="admin-list" class="space-y-2">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        function addProduct() {
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const img = document.getElementById('pImg').value;
+
+            if(name && price && img) {
+                alert("ပစ္စည်းတင်ခြင်း အောင်မြင်ပါသည်။ (မှတ်ချက် - GitHub Pages သည် Static ဖြစ်သောကြောင့် Data သိမ်းရန် Backend လိုအပ်ပါသည်။ အခုလောလောဆယ် UI ကို အရင်ကြည့်ပါမယ်)");
+                // ဒီနေရာမှာ နောက်ပိုင်း Database နဲ့ ချိတ်ဖို့ Code ထည့်ပါမယ်
+            } else {
+                alert("အချက်အလက် အကုန်ဖြည့်ပါ");
+            }
+        }
+    </script>
+</body>
+</html>
