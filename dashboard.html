@@ -16,10 +16,10 @@
     <div class="max-w-md w-full glass p-8 rounded-[2.5rem] shadow-2xl mb-12">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-blue-500 tracking-tight uppercase">Admin Panel</h1>
-            <p class="text-gray-500 text-sm mt-2">Add new products to your store</p>
+            <p class="text-gray-500 text-sm mt-2">Add new products (3 Images) to your store</p>
         </div>
 
-        <div class="space-y-5">
+        <div class="space-y-4">
             <div>
                 <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Name</label>
                 <input type="text" id="pName" placeholder="e.g. Gaming Mouse" 
@@ -35,13 +35,22 @@
             <div>
                 <label class="text-xs text-gray-400 ml-2 mb-1 block">Product Details</label>
                 <textarea id="pDesc" placeholder="Describe the product features..." 
-                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white h-32 resize-none"></textarea>
+                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white h-24 resize-none"></textarea>
             </div>
 
-            <div>
-                <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL</label>
-                <input type="text" id="pImg" placeholder="https://via.placeholder.com/300" 
-                    class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white">
+            <div class="grid grid-cols-1 gap-3">
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 1 (Main)</label>
+                    <input type="text" id="pImg1" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 2</label>
+                    <input type="text" id="pImg2" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">Image URL 3</label>
+                    <input type="text" id="pImg3" placeholder="https://..." class="w-full bg-slate-900/50 p-4 rounded-2xl outline-none border border-slate-800 text-white text-sm">
+                </div>
             </div>
 
             <button id="upBtn" onclick="addProduct()" 
@@ -57,8 +66,7 @@
 
     <div class="max-w-5xl w-full">
         <h2 class="text-2xl font-bold text-blue-400 mb-6 text-center uppercase tracking-widest">Current Inventory</h2>
-        <div id="admin-product-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            </div>
+        <div id="admin-product-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
     </div>
 
     <script>
@@ -81,7 +89,7 @@
                     card.className = `glass p-4 rounded-3xl border ${isSold ? 'border-red-900 opacity-75' : 'border-slate-800'} flex flex-col items-center text-center relative`;
                     
                     card.innerHTML = `
-                        <img src="${item.img}" class="w-full h-32 object-cover rounded-2xl mb-3 shadow-inner ${isSold ? 'grayscale' : ''}">
+                        <img src="${item.img1}" class="w-full h-32 object-cover rounded-2xl mb-3 shadow-inner ${isSold ? 'grayscale' : ''}">
                         <h3 class="font-bold text-sm truncate w-full text-gray-100">${item.name}</h3>
                         <p class="text-blue-400 text-xs mt-1 font-bold">${item.price} MMK</p>
                         <div class="mt-4 flex gap-2 w-full">
@@ -109,7 +117,7 @@
                     body: JSON.stringify({ action, row })
                 });
                 alert("Updated successfully!");
-                setTimeout(loadProducts, 1000); // 1 sec delay to allow sheet to update
+                setTimeout(loadProducts, 1000);
             } catch (e) {
                 alert("Error updating status");
             }
@@ -119,11 +127,13 @@
             const name = document.getElementById('pName').value;
             const price = document.getElementById('pPrice').value;
             const desc = document.getElementById('pDesc').value;
-            const img = document.getElementById('pImg').value;
+            const img1 = document.getElementById('pImg1').value;
+            const img2 = document.getElementById('pImg2').value;
+            const img3 = document.getElementById('pImg3').value;
             const btn = document.getElementById('upBtn');
 
-            if(!name || !price || !img || !desc) {
-                alert("အချက်အလက်အားလုံးကို ပြည့်စုံအောင် ဖြည့်ပေးပါဗျ။");
+            if(!name || !price || !img1 || !desc) {
+                alert("အနည်းဆုံး အမည်၊ စျေးနှုန်း၊ Details နှင့် ပုံ(၁) တို့ကို ဖြည့်ပေးပါဗျ။");
                 return;
             }
 
@@ -131,7 +141,7 @@
             btn.innerText = "Processing...";
             btn.style.opacity = "0.6";
 
-            const data = { name, price, desc, img };
+            const data = { name, price, desc, img1, img2, img3 };
 
             try {
                 await fetch(api_url, {
@@ -147,7 +157,9 @@
                 document.getElementById('pName').value = "";
                 document.getElementById('pPrice').value = "";
                 document.getElementById('pDesc').value = "";
-                document.getElementById('pImg').value = "";
+                document.getElementById('pImg1').value = "";
+                document.getElementById('pImg2').value = "";
+                document.getElementById('pImg3').value = "";
                 
                 setTimeout(loadProducts, 1000);
 
