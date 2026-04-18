@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Guarantee - Blitz Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <style>
+        body { 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            color: #f8fafc; 
+            min-height: 100vh; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .guarantee-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guarantee-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+
+    <div class="max-w-4xl mx-auto mb-16 text-center">
+        <div class="flex justify-start mb-8">
+            <button onclick="window.history.back()" class="back-btn px-5 py-2 rounded-xl text-gray-400 flex items-center gap-2 text-sm font-semibold">
+                <span class="material-icons-round text-sm">arrow_back_ios</span> Back to Store
+            </button>
+        </div>
+        <h1 class="text-5xl font-black mb-6 gradient-text tracking-tight">Blitz Service Guarantee</h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">Blitz Store မှ ဝယ်ယူသူတိုင်း စိတ်အေးချမ်းသာစွာ ဝယ်ယူနိုင်ရန် အကောင်းဆုံးဝန်ဆောင်မှုများဖြင့် အာမခံပါသည်။</p>
+    </div>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
+            <div class="icon-box text-blue-400">
+                <span class="material-icons-round text-3xl">history</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-white">၁၅ ရက်အတွင်း အခမဲ့ပြန်အမ်းခြင်း</h3>
+            <p class="text-gray-400 leading-relaxed">
+                သင်၏ဝယ်ယူမှုအပေါ် စိတ်ကျေနပ်မှုရှိစေရန် <span class="text-blue-400 font-bold">BLITZ STORE</span> ပစ္စည်းများအတွက် ၁၅ ရက်အတွင်း အခမဲ့ပြန်လဲနိုင်မှုရှိပါသည်။ စည်းမျဉ်းနှင့်သတ်မှတ်ချက်များ တင်ပြချက်။
+            </p>
+        </div>
+
+        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
+            <div class="icon-box text-red-400" style="background: rgba(239, 68, 68, 0.1);">
+                <span class="material-icons-round text-3xl">verified</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-white">100% ပစ္စည်းအစစ်</h3>
+            <p class="text-gray-400 leading-relaxed">
+                <span class="text-red-400 font-bold">BLITZ STORE</span> မှထုတ်ကုန်များသည် 100% အစစ်ဖြစ်ကြောင်း Shopee မှအာမခံပါသည်။ အကယ်၍ သင့်ထံသို့ အစစ်အမှန်မဟုတ်သောထုတ်ကုန်များ ရောက်ရှိလာပါက ထုတ်ကုန်တန်ဖိုး၏ <span class="text-white font-bold underline">နှစ်ဆ</span> ကို ပြန်လည်အလျော်ပေးမှာဖြစ်ပါသည်။
+            </p>
+        </div>
+
+        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
+            <div class="icon-box text-emerald-400" style="background: rgba(16, 185, 129, 0.1);">
+                <span class="material-icons-round text-3xl">local_offer</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-white">အထူးလျှော့စျေးများ</h3>
+            <p class="text-gray-400 leading-relaxed">
+                <span class="text-emerald-400 font-bold">BLITZ STORE</span> မှ ထိပ်တန်းတံဆိပ်များ၏ အထူးလျှော့ဈေးများကို စိတ်ကြိုက်ခံစားလိုက်ပါ။
+            </p>
+        </div>
+
+        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
+            <div class="icon-box text-amber-400" style="background: rgba(245, 158, 11, 0.1);">
+                <span class="material-icons-round text-3xl">inventory_2</span>
+            </div>
+            <h3 class="text-2xl font-bold mb-4 text-white">Shopee မှဖြည့်ဆည်းပေးသော</h3>
+            <p class="text-gray-400 leading-relaxed">
+                Shopee မှဖြည့်ဆည်းပေးသော ထုတ်ကုန်ကို <span class="text-amber-400 font-bold">BLITZ STORE</span> မှ ရွေးချယ်၊ ပြင်ဆင်ပြီး စီမံခန့်ခွဲထားပြီးဖြစ်ပါသည်။ သင့်ထံသို့ အကောင်းဆုံးသော အရည်အသွေး နှင့် ပို့ဆောင်ရေးဝန်ဆောင်မှုများရရှိစေရန် စီစဉ်ပေးထားပါသည်။
+            </p>
+        </div>
+
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-20 text-center">
+        <div class="inline-flex items-center gap-2 px-6 py-3 glass rounded-full border border-blue-500/20">
+            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Blitz Store Official Service</span>
+        </div>
+    </div>
+
+</body>
+</html>
