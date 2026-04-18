@@ -28,14 +28,13 @@
         body { 
             background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
             color: #f8fafc; 
-            height: 100vh; /* Screen အမြင့်အတိုင်း အသေသတ်မှတ် */
+            height: 100vh; 
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden; /* တစ်ကိုယ်လုံး Scroll ဖြစ်တာကို ပိတ်မယ် */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
 
-        /* App Container Layout */
         .app-layout {
             display: flex;
             flex: 1;
@@ -45,7 +44,6 @@
             width: 100%;
         }
 
-        /* အလယ်က Product Area ကိုပဲ Scroll ပေးမယ် */
         main.scrollable-content {
             flex: 1;
             overflow-y: auto;
@@ -125,10 +123,54 @@
             display: block;
         }
 
-        @media (max-width: 768px) {
-            body { overflow-y: auto; height: auto; } /* Mobile မှာဆိုရင် ပုံမှန်အတိုင်း ပြန်ထားမယ် */
-            .app-layout { flex-direction: column; overflow: visible; }
-            main.scrollable-content { overflow: visible; height: auto; }
+        /* --- MOBILE VERSION CUSTOMIZATION --- */
+        @media (max-width: 1024px) {
+            body { overflow-y: auto; height: auto; }
+            .app-layout { 
+                flex-direction: column; 
+                overflow: visible; 
+                padding: 10px;
+                gap: 20px;
+            }
+            main.scrollable-content { 
+                overflow: visible; 
+                height: auto; 
+                padding: 0;
+                order: 2; /* Products in middle */
+            }
+
+            /* Show Banners on Mobile */
+            .banner-container {
+                display: block !important;
+                width: 100%;
+                margin-top: 0;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.03);
+            }
+            
+            /* Order Banners */
+            aside:nth-of-type(1) { order: 1; } /* Left Banner to Top */
+            aside:nth-of-type(2) { order: 3; } /* Right Banner to Bottom */
+
+            /* Horizontal Scroll Animation for Mobile */
+            .scroll-wrapper {
+                flex-direction: row;
+                width: max-content;
+                animation: scrollHorizontal 15s linear infinite;
+                padding: 10px;
+            }
+
+            .scroll-wrapper img {
+                width: 280px; /* Mobile Friendly Width */
+                height: 160px; /* Banner Height for Mobile */
+                flex-shrink: 0;
+            }
+
+            @keyframes scrollHorizontal {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+
             nav { 
                 display: flex;
                 flex-wrap: wrap; 
@@ -262,7 +304,7 @@
 
     <div class="app-layout">
         
-        <aside class="hidden lg:block banner-container">
+        <aside class="banner-container">
             <div class="scroll-wrapper" id="leftBannerWrapper">
                 <img id="leftBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
                 <img id="leftBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
@@ -288,7 +330,7 @@
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"></div>
         </main>
 
-        <aside class="hidden lg:block banner-container">
+        <aside class="banner-container">
             <div class="scroll-wrapper" id="rightBannerWrapper">
                 <img id="rightBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
                 <img id="rightBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
