@@ -101,14 +101,14 @@
             animation-play-state: paused;
         }
 
-        /* --- MOBILE VERSION CUSTOMIZATION --- */
+        /* --- MOBILE VERSION CUSTOMIZATION (ဖုန်းအတွက်ပဲ ပြင်ထားတဲ့အပိုင်း) --- */
         @media (max-width: 1024px) {
             body { overflow-y: auto; height: auto; }
             .app-layout { 
                 flex-direction: column; 
                 overflow: visible; 
                 padding: 10px;
-                gap: 20px;
+                gap: 15px; /* Gap ကို နည်းနည်းလျှော့လိုက်တယ် */
             }
             main.scrollable-content { 
                 overflow: visible; 
@@ -120,28 +120,32 @@
             .banner-pc { display: none !important; }
             .banner-mobile { display: block !important; }
 
+            /* အောက်က Banner ကို ဖျောက်လိုက်ခြင်း */
+            aside:nth-of-type(2) { display: none !important; }
+
             .banner-container {
                 display: block !important;
                 width: 100%;
                 margin-top: 0;
-                border-radius: 20px;
+                border-radius: 16px; /* ပိုသေးတဲ့ ဖုန်းနဲ့လိုက်အောင် border-radius လျှော့ထားတယ် */
                 background: rgba(255, 255, 255, 0.03);
             }
             
             aside:nth-of-type(1) { order: 1; }
-            aside:nth-of-type(2) { order: 3; }
 
             .scroll-wrapper {
                 flex-direction: row;
                 width: max-content;
                 animation: scrollHorizontal 15s linear infinite;
-                padding: 10px;
+                padding: 8px; /* Padding လျှော့လိုက်တယ် */
+                gap: 10px;
             }
 
             .scroll-wrapper img {
-                width: 280px; 
-                height: 160px; 
+                width: 220px; /* အလျားကို ၂၈၀ ကနေ ၂၂၀ သေးလိုက်တယ် */
+                height: 120px; /* အမြင့်ကို ၁၆၀ ကနေ ၁၂၀ သေးလိုက်တယ် */
                 flex-shrink: 0;
+                border-radius: 12px;
             }
 
             @keyframes scrollHorizontal {
@@ -414,17 +418,12 @@
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
 
-                // Banners Logic
                 if (data.ads) {
-                    // PC Banners (Vertical)
                     document.querySelectorAll('.pc-left-1, .pc-left-2').forEach(el => el.src = data.ads.pcAd);
                     document.querySelectorAll('.pc-right-1, .pc-right-2').forEach(el => el.src = data.ads.pcAd);
-                    
-                    // Mobile Banners (Horizontal)
                     document.querySelectorAll('.mobile-left-1, .mobile-left-2').forEach(el => el.src = data.ads.mobileAd);
                     document.querySelectorAll('.mobile-right-1, .mobile-right-2').forEach(el => el.src = data.ads.mobileAd);
 
-                    // Show effect
                     document.querySelectorAll('.banner-img-fade').forEach((img, i) => {
                         img.onload = () => setTimeout(() => img.classList.add('show'), i * 100);
                     });
