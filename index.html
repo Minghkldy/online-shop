@@ -62,6 +62,7 @@
             transform: translateY(0);
         }
 
+        /* PC အတွက် Vertical Banner Style */
         .banner-container {
             width: 180px;
             height: fit-content;
@@ -88,6 +89,9 @@
             border-radius: 20px;
         }
 
+        /* Mobile မှာ ပုံအလျားလိုက်ပြဖို့ Class များ */
+        .banner-mobile { display: none !important; }
+
         @keyframes scrollVertical {
             0% { transform: translateY(0); }
             100% { transform: translateY(-50%); } 
@@ -95,32 +99,6 @@
 
         .banner-container:hover .scroll-wrapper {
             animation-play-state: paused;
-        }
-
-        .discount-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(239, 68, 68, 0.8);
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 20;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .nav-marquee-container {
-            flex-grow: 1;
-            overflow: hidden;
-            white-space: nowrap;
-            margin: 0 20px;
-            background: rgba(37, 99, 235, 0.1);
-            border-radius: 12px;
-            display: block;
         }
 
         /* --- MOBILE VERSION CUSTOMIZATION --- */
@@ -136,10 +114,12 @@
                 overflow: visible; 
                 height: auto; 
                 padding: 0;
-                order: 2; /* Products in middle */
+                order: 2;
             }
 
-            /* Show Banners on Mobile */
+            .banner-pc { display: none !important; }
+            .banner-mobile { display: block !important; }
+
             .banner-container {
                 display: block !important;
                 width: 100%;
@@ -148,11 +128,9 @@
                 background: rgba(255, 255, 255, 0.03);
             }
             
-            /* Order Banners */
-            aside:nth-of-type(1) { order: 1; } /* Left Banner to Top */
-            aside:nth-of-type(2) { order: 3; } /* Right Banner to Bottom */
+            aside:nth-of-type(1) { order: 1; }
+            aside:nth-of-type(2) { order: 3; }
 
-            /* Horizontal Scroll Animation for Mobile */
             .scroll-wrapper {
                 flex-direction: row;
                 width: max-content;
@@ -161,8 +139,8 @@
             }
 
             .scroll-wrapper img {
-                width: 280px; /* Mobile Friendly Width */
-                height: 160px; /* Banner Height for Mobile */
+                width: 280px; 
+                height: 160px; 
                 flex-shrink: 0;
             }
 
@@ -187,6 +165,33 @@
                 margin: 5px 0 0 0; 
                 flex-grow: 0; 
             }
+        }
+
+        /* Common Styles */
+        .discount-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(239, 68, 68, 0.8);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .nav-marquee-container {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 20px;
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 12px;
+            display: block;
         }
 
         .marquee-text { 
@@ -306,8 +311,10 @@
         
         <aside class="banner-container">
             <div class="scroll-wrapper" id="leftBannerWrapper">
-                <img id="leftBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
-                <img id="leftBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+                <img src="" class="banner-img-fade banner-pc pc-left-1" fetchpriority="high">
+                <img src="" class="banner-img-fade banner-pc pc-left-2" fetchpriority="high">
+                <img src="" class="banner-img-fade banner-mobile mobile-left-1" loading="lazy">
+                <img src="" class="banner-img-fade banner-mobile mobile-left-2" loading="lazy">
             </div>
         </aside>
 
@@ -332,8 +339,10 @@
 
         <aside class="banner-container">
             <div class="scroll-wrapper" id="rightBannerWrapper">
-                <img id="rightBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
-                <img id="rightBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+                <img src="" class="banner-img-fade banner-pc pc-right-1" fetchpriority="high">
+                <img src="" class="banner-img-fade banner-pc pc-right-2" fetchpriority="high">
+                <img src="" class="banner-img-fade banner-mobile mobile-right-1" loading="lazy">
+                <img src="" class="banner-img-fade banner-mobile mobile-right-2" loading="lazy">
             </div>
         </aside>
 
@@ -405,34 +414,23 @@
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
 
+                // Banners Logic
                 if (data.ads) {
-                    const b1 = document.getElementById('leftBanner1');
-                    const b2 = document.getElementById('leftBanner2');
-                    const b3 = document.getElementById('rightBanner1');
-                    const b4 = document.getElementById('rightBanner2');
+                    // PC Banners (Vertical)
+                    document.querySelectorAll('.pc-left-1, .pc-left-2').forEach(el => el.src = data.ads.pcAd);
+                    document.querySelectorAll('.pc-right-1, .pc-right-2').forEach(el => el.src = data.ads.pcAd);
                     
-                    b1.src = data.ads.leftAd;
-                    b2.src = data.ads.leftAd;
-                    b3.src = data.ads.rightAd;
-                    b4.src = data.ads.rightAd;
+                    // Mobile Banners (Horizontal)
+                    document.querySelectorAll('.mobile-left-1, .mobile-left-2').forEach(el => el.src = data.ads.mobileAd);
+                    document.querySelectorAll('.mobile-right-1, .mobile-right-2').forEach(el => el.src = data.ads.mobileAd);
 
-                    const banners = [b1, b2, b3, b4];
-                    banners.forEach((img, index) => {
-                        img.onload = () => {
-                            setTimeout(() => {
-                                img.classList.add('show');
-                            }, index * 100);
-                        };
+                    // Show effect
+                    document.querySelectorAll('.banner-img-fade').forEach((img, i) => {
+                        img.onload = () => setTimeout(() => img.classList.add('show'), i * 100);
                     });
                 }
                 
-                if (data.products && Array.isArray(data.products)) {
-                    allItems = data.products;
-                } else if (Array.isArray(data)) {
-                    allItems = data;
-                } else {
-                    allItems = [];
-                }
+                allItems = data.products || data || [];
                 
                 if (allItems.length > 0) {
                     displayProducts(allItems);
@@ -469,10 +467,6 @@
         function displayProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = ""; 
-            if (!items || items.length === 0) {
-                grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
-                return;
-            }
             items.forEach(item => {
                 const isSold = item.status === "Sold Out";
                 const productData = encodeURIComponent(JSON.stringify(item));
@@ -481,33 +475,22 @@
 
                 const originalPrice = Number(item.price); 
                 const discountPercent = Number(item.discount || 0);
-                const hasDiscount = discountPercent > 0;
-
-                let discountBadgeHTML = hasDiscount ? `<div class="discount-badge">-${discountPercent}%</div>` : '';
-                
-                let priceHTML = '';
-                if (hasDiscount) {
-                    const salePrice = originalPrice - Math.round(originalPrice * (discountPercent / 100));
-                    priceHTML = `
-                        <div class="mb-6">
-                            <span class="text-gray-500 text-xs line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
-                            <span class="text-blue-400 font-black text-2xl">${salePrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></span>
-                        </div>`;
-                } else {
-                    priceHTML = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
-                }
+                const salePrice = hasDiscount(discountPercent) ? originalPrice - Math.round(originalPrice * (discountPercent / 100)) : originalPrice;
 
                 grid.innerHTML += `
                     <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''} relative">
                         <div class="w-full aspect-[3/4] mb-5 overflow-hidden rounded-[24px] relative group bg-slate-800">
                             <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase border border-white/10">${item.category || 'Luxury'}</span>
-                            ${discountBadgeHTML}
-                            <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                            ${discountPercent > 0 ? `<div class="discount-badge">-${discountPercent}%</div>` : ''}
+                            <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110 cursor-zoom-in">
                             ${isSold ? `<div class="absolute inset-0 flex items-center justify-center bg-black/40"><span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs uppercase">Sold Out</span></div>` : ''}
                         </div>
                         <div class="px-2 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold truncate text-white mb-2">${item.name}</h3>
-                            ${priceHTML}
+                            <div class="mb-6">
+                                ${discountPercent > 0 ? `<span class="text-gray-500 text-xs line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>` : ''}
+                                <span class="text-blue-400 font-black text-2xl">${salePrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></span>
+                            </div>
                             <div class="mt-auto flex gap-3">
                                 <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase text-white">Info</button>
                                 <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase" ${isSold ? 'disabled' : ''}>${isSold ? 'Sold Out' : 'Order Now'}</button>
@@ -517,6 +500,8 @@
                 `;
             });
         }
+
+        function hasDiscount(val) { return Number(val) > 0; }
 
         function filterProducts(category, btn) {
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -531,42 +516,31 @@
             const modal = document.getElementById('detailModal');
             const content = document.getElementById('modalContent');
             const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
-            const imgListJSON = JSON.stringify(imgList);
-
-            const originalPrice = Number(item.price);
-            const discountPercent = Number(item.discount || 0);
-            const hasDiscount = discountPercent > 0;
-
-            let detailPriceHTML = '';
-            if (hasDiscount) {
-                const salePrice = originalPrice - Math.round(originalPrice * (discountPercent / 100));
-                detailPriceHTML = `
-                    <div class="mb-6">
-                        <span class="text-gray-500 text-sm line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
-                        <span class="text-blue-400 font-black text-3xl">${salePrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></span>
-                    </div>`;
-            } else {
-                detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
-            }
+            const discount = Number(item.discount || 0);
+            const price = Number(item.price);
+            const salePrice = discount > 0 ? price - Math.round(price * (discount / 100)) : price;
 
             content.innerHTML = `
                 <div class="flex flex-col md:flex-row gap-8">
                     <div class="md:w-1/2">
                         <div class="img-slider mb-4">
-                            ${imgList.map((img, idx) => `<img src="${img}" class="slider-item" onclick='openZoom(${imgListJSON}, ${idx})' onerror="this.src='https://via.placeholder.com/300?text=No+Image'">`).join('')}
+                            ${imgList.map((img, idx) => `<img src="${img}" class="slider-item" onclick='openZoom(${JSON.stringify(imgList)}, ${idx})'>`).join('')}
                         </div>
-                        <p class="text-[10px] text-gray-500 text-center font-bold uppercase mb-4">Swipe to view more ↔️ / Click to Zoom 🔍</p>
+                        <p class="text-[10px] text-gray-500 text-center font-bold uppercase mb-4">Swipe ↔️ / Click 🔍</p>
                     </div>
                     <div class="md:w-1/2 flex flex-col justify-between">
                         <div class="px-2">
                             <span class="text-blue-500 font-bold text-xs uppercase tracking-widest mb-2">${item.category || 'Luxury'}</span>
                             <h2 class="text-3xl font-black mb-3 text-white leading-tight">${item.name}</h2>
-                            ${detailPriceHTML}
+                            <div class="mb-6">
+                                ${discount > 0 ? `<span class="text-gray-500 text-sm line-through block decoration-red-500/50">${price.toLocaleString()} MMK</span>` : ''}
+                                <span class="text-blue-400 font-black text-3xl">${salePrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></span>
+                            </div>
                             <div class="bg-white/5 p-6 rounded-[24px] border border-white/5 h-40 overflow-y-auto mb-8 no-scrollbar">
                                 <p class="text-gray-400 text-sm leading-relaxed whitespace-pre-line">${item.desc || 'No description provided.'}</p>
                             </div>
                         </div>
-                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-widest text-white active:scale-95 transition-all">Confirm Order</button>
+                        <button onclick="openContactModal()" class="w-full py-5 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black text-sm uppercase tracking-widest text-white transition-all">Confirm Order</button>
                     </div>
                 </div>
             `;
