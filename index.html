@@ -236,46 +236,53 @@
         let currentZoomIndex = 0;
 
         async function loadProducts() {
-            const grid = document.getElementById('product-grid');
-            const refreshIcon = document.getElementById('refreshIcon');
-            
-            const cachedData = localStorage.getItem('blitz_products');
-            if (cachedData && allItems.length === 0) {
-                const data = JSON.parse(cachedData);
-                allItems = data.products || (Array.isArray(data) ? data : []);
-                displayProducts(allItems);
-                handleMarquee(data);
-            } 
-            
-            if (allItems.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-32">
-                        <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
-                    </div>`;
-            }
+    const grid = document.getElementById('product-grid');
+    const refreshIcon = document.getElementById('refreshIcon');
+    
+    // ၁။ အရင်ဆုံး UI မှာ loading ပြထားမယ်
+    if (allItems.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full text-center py-32">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
+            </div>`;
+    }
 
-            if(refreshIcon) refreshIcon.classList.add('rotating');
-            
-            try {
-                const response = await fetch(api_url);
-                const data = await response.json();
-                
-                localStorage.setItem('blitz_products', JSON.stringify(data));
-                
-                handleMarquee(data);
-                allItems = data.products || (Array.isArray(data) ? data : []);
-                displayProducts(allItems);
-
-            } catch (error) {
-                console.error("Fetch error:", error);
-                if (allItems.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
-                }
-            } finally {
-                if(refreshIcon) refreshIcon.classList.remove('rotating');
-            }
+    if(refreshIcon) refreshIcon.classList.add('rotating');
+    
+    try {
+        // ၂။ API ကနေ data ကို တိုက်ရိုက်ဆွဲမယ် (await သုံးထားလို့ data ရမှ အောက်က code တွေ ဆက်လုပ်မယ်)
+        const response = await fetch(api_url);
+        const data = await response.json();
+        
+        // ၃။ ရလာတဲ့ data ကို သိမ်းမယ်
+        localStorage.setItem('blitz_products', JSON.stringify(data));
+        handleMarquee(data);
+        
+        // ၄။ Data structure ကို သေချာစစ်ပြီးမှ display လုပ်မယ်
+        allItems = data.products || (Array.isArray(data) ? data : []);
+        
+        if (allItems.length > 0) {
+            displayProducts(allItems);
+        } else {
+            grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
         }
+
+    } catch (error) {
+        console.error("Fetch error:", error);
+        // ၅။ Error တက်ရင်မှ Cache ထဲကဟာကို ပြန်သုံးမယ်
+        const cachedData = localStorage.getItem('blitz_products');
+        if (cachedData) {
+            const data = JSON.parse(cachedData);
+            allItems = data.products || data;
+            displayProducts(allItems);
+        } else {
+            grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+        }
+    } finally {
+        if(refreshIcon) refreshIcon.classList.remove('rotating');
+    }
+}
 
         function handleMarquee(data) {
             const box = document.getElementById('marquee-box');
