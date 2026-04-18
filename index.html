@@ -235,17 +235,22 @@
         let currentZoomImages = [];
         let currentZoomIndex = 0;
 
+        // --- ပြင်ဆင်ထားသော loadProducts function ---
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
             
+            // ၁။ အရင်ဆုံး Cache ထဲကဟာကို ပြထားမယ် (မြန်အောင်လို့)
             const cachedData = localStorage.getItem('blitz_products');
             if (cachedData && allItems.length === 0) {
                 const data = JSON.parse(cachedData);
-                allItems = data.products || data;
+                allItems = data.products || (Array.isArray(data) ? data : []);
                 displayProducts(allItems);
                 handleMarquee(data);
-            } else if (allItems.length === 0) {
+            } 
+            
+            // ၂။ Data မရှိသေးရင် Loading ပြမယ်
+            if (allItems.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-32">
                         <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
@@ -256,17 +261,23 @@
             if(refreshIcon) refreshIcon.classList.add('rotating');
             
             try {
+                // ၃။ API ကနေ Fresh Data ဆွဲမယ်
                 const response = await fetch(api_url);
                 const data = await response.json();
+                
+                // ၄။ ရလာတဲ့ data အသစ်ကို cache မှာ ပြန်သိမ်းမယ်
                 localStorage.setItem('blitz_products', JSON.stringify(data));
+                
+                // ၅။ UI ကို update လုပ်မယ်
                 handleMarquee(data);
-                allItems = data.products || data;
+                allItems = data.products || (Array.isArray(data) ? data : []);
                 displayProducts(allItems);
+
             } catch (error) {
+                console.error("Fetch error:", error);
                 if (allItems.length === 0) {
                     grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
                 }
-                console.error("Fetch error:", error);
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('rotating');
             }
@@ -302,8 +313,6 @@
                 let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
 
                 if (discountValue > 0) {
-                    // --- Fixed Logic: Percentage calculation ---
-                    // Website မှာ Discount % ပြချင်ရင် Formula က: Price * (Percentage/100)
                     const discountAmt = Math.round(originalPrice * (discountValue / 100));
                     const salePrice = originalPrice - discountAmt;
                     
@@ -356,7 +365,6 @@
             let detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
             
             if (discountValue > 0) {
-                // --- Fixed Logic: Percentage calculation ---
                 const discountAmt = Math.round(originalPrice * (discountValue / 100));
                 const salePrice = originalPrice - discountAmt;
 
