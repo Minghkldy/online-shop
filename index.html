@@ -235,12 +235,10 @@
         let currentZoomImages = [];
         let currentZoomIndex = 0;
 
-        // --- ပြင်ဆင်ထားသော loadProducts function ---
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
             
-            // ၁။ အရင်ဆုံး Cache ထဲကဟာကို ပြထားမယ် (မြန်အောင်လို့)
             const cachedData = localStorage.getItem('blitz_products');
             if (cachedData && allItems.length === 0) {
                 const data = JSON.parse(cachedData);
@@ -249,7 +247,6 @@
                 handleMarquee(data);
             } 
             
-            // ၂။ Data မရှိသေးရင် Loading ပြမယ်
             if (allItems.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-32">
@@ -261,14 +258,11 @@
             if(refreshIcon) refreshIcon.classList.add('rotating');
             
             try {
-                // ၃။ API ကနေ Fresh Data ဆွဲမယ်
                 const response = await fetch(api_url);
                 const data = await response.json();
                 
-                // ၄။ ရလာတဲ့ data အသစ်ကို cache မှာ ပြန်သိမ်းမယ်
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 
-                // ၅။ UI ကို update လုပ်မယ်
                 handleMarquee(data);
                 allItems = data.products || (Array.isArray(data) ? data : []);
                 displayProducts(allItems);
@@ -294,6 +288,7 @@
             }
         }
 
+        // --- ပြင်ဆင်ထားသော displayProducts function ---
         function displayProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = ""; 
@@ -307,34 +302,36 @@
                 const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
                 const imgListJSON = JSON.stringify(imgList);
 
+                // Discount Logic
                 const originalPrice = Number(item.price); 
-                const discountValue = Number(item.discount) || 0;
-                let discountHTML = '';
-                let priceDisplay = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
+                const discountPercent = Number(item.discount || 0);
+                const hasDiscount = discountPercent > 0;
 
-                if (discountValue > 0) {
-                    const discountAmt = Math.round(originalPrice * (discountValue / 100));
-                    const salePrice = originalPrice - discountAmt;
-                    
-                    discountHTML = `<div class="discount-badge">-${discountValue}%</div>`;
-                    priceDisplay = `
+                let discountBadgeHTML = hasDiscount ? `<div class="discount-badge">-${discountPercent}%</div>` : '';
+                
+                let priceHTML = '';
+                if (hasDiscount) {
+                    const salePrice = originalPrice - Math.round(originalPrice * (discountPercent / 100));
+                    priceHTML = `
                         <div class="mb-6">
                             <span class="text-gray-500 text-xs line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
                             <span class="text-blue-400 font-black text-2xl">${salePrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></span>
                         </div>`;
+                } else {
+                    priceHTML = `<p class="text-blue-400 font-black text-2xl mb-6">${originalPrice.toLocaleString()} <span class="text-[10px] text-gray-500">MMK</span></p>`;
                 }
 
                 grid.innerHTML += `
                     <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''} relative">
                         <div class="w-full h-52 mb-5 overflow-hidden rounded-[24px] relative group">
                             <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase border border-white/10">${item.category || 'Luxury'}</span>
-                            ${discountHTML}
+                            ${discountBadgeHTML}
                             <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                             ${isSold ? `<div class="absolute inset-0 flex items-center justify-center bg-black/40"><span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs uppercase">Sold Out</span></div>` : ''}
                         </div>
                         <div class="px-2 flex flex-col flex-grow">
                             <h3 class="text-lg font-bold truncate text-white mb-2">${item.name}</h3>
-                            ${priceDisplay}
+                            ${priceHTML}
                             <div class="mt-auto flex gap-3">
                                 <button onclick="showDetails('${productData}')" class="flex-1 py-3.5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-bold text-xs uppercase text-white">Info</button>
                                 <button onclick="openContactModal()" class="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-500 rounded-2xl transition-all font-bold text-white text-xs uppercase" ${isSold ? 'disabled' : ''}>${isSold ? 'Sold Out' : 'Order Now'}</button>
@@ -353,6 +350,7 @@
             document.getElementById('grid-title').innerText = category === 'All' ? "Latest Products" : category;
         }
 
+        // --- ပြင်ဆင်ထားသော showDetails function ---
         function showDetails(encodedData) {
             const item = JSON.parse(decodeURIComponent(encodedData));
             const modal = document.getElementById('detailModal');
@@ -361,18 +359,19 @@
             const imgListJSON = JSON.stringify(imgList);
 
             const originalPrice = Number(item.price);
-            const discountValue = Number(item.discount) || 0;
-            let detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
-            
-            if (discountValue > 0) {
-                const discountAmt = Math.round(originalPrice * (discountValue / 100));
-                const salePrice = originalPrice - discountAmt;
+            const discountPercent = Number(item.discount || 0);
+            const hasDiscount = discountPercent > 0;
 
+            let detailPriceHTML = '';
+            if (hasDiscount) {
+                const salePrice = originalPrice - Math.round(originalPrice * (discountPercent / 100));
                 detailPriceHTML = `
                     <div class="mb-6">
                         <span class="text-gray-500 text-sm line-through block decoration-red-500/50">${originalPrice.toLocaleString()} MMK</span>
                         <span class="text-blue-400 font-black text-3xl">${salePrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></span>
                     </div>`;
+            } else {
+                detailPriceHTML = `<p class="text-blue-400 font-black text-3xl mb-6">${originalPrice.toLocaleString()} <span class="text-sm font-medium text-gray-500">MMK</span></p>`;
             }
 
             content.innerHTML = `
