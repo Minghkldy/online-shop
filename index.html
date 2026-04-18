@@ -49,6 +49,7 @@
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
+        /* Marquee Container CSS */
         .nav-marquee-container {
             flex-grow: 1;
             overflow: hidden;
@@ -56,12 +57,27 @@
             margin: 0 20px;
             background: rgba(37, 99, 235, 0.1);
             border-radius: 12px;
-            display: none; 
+            display: block; /* အမြဲပေါ်နေအောင် block ထားပါသည် */
         }
 
+        /* ဖုန်းဆိုဒ်အတွက် Layout ပြင်ဆင်ချက် */
         @media (max-width: 768px) {
-            nav { flex-wrap: wrap; gap: 10px; padding: 15px !important; }
-            .nav-marquee-container { order: 3; width: 100%; margin: 5px 0 0 0; flex-grow: 0; }
+            nav { 
+                display: flex;
+                flex-wrap: wrap; 
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px; 
+                padding: 12px 15px !important; 
+            }
+            nav h1 { order: 1; font-size: 20px; } /* Logo */
+            nav .nav-actions { order: 2; } /* Buttons */
+            .nav-marquee-container { 
+                order: 3; 
+                width: 100%; 
+                margin: 5px 0 0 0; 
+                flex-grow: 0; 
+            }
         }
 
         .marquee-text { 
@@ -166,8 +182,8 @@
             <p id="marquee-content" class="marquee-text"></p>
         </div>
 
-        <div class="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            <a href="guarantee.html" class="flex items-center gap-1.5 glass hover:bg-white/10 px-3 md:px-4 py-2.5 rounded-2xl text-[10px] md:text-xs font-bold transition-all border border-white/10 text-blue-400">
+        <div class="nav-actions flex items-center gap-2 md:gap-4 flex-shrink-0">
+            <a href="guarantee.html" class="flex items-center gap-1.5 glass hover:bg-white/10 px-3 md:px-4 py-2.5 rounded-2xl text-[12px] md:text-xs font-bold transition-all border border-white/10 text-blue-400">
                 <span class="material-icons-round text-sm">shield</span> အာမခံ
             </a>
 
@@ -256,13 +272,20 @@
             if(refreshIcon) refreshIcon.classList.add('rotating');
             
             try {
-                const response = await fetch(api_url);
+                const response = await fetch(api_url, { redirect: 'follow' });
                 const data = await response.json();
                 
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
                 
-                allItems = data.products || (Array.isArray(data) ? data : []);
+                // JSON format နှစ်မျိုးလုံးအတွက် စစ်ဆေးသည်
+                if (data.products && Array.isArray(data.products)) {
+                    allItems = data.products;
+                } else if (Array.isArray(data)) {
+                    allItems = data;
+                } else {
+                    allItems = [];
+                }
                 
                 if (allItems.length > 0) {
                     displayProducts(allItems);
@@ -290,7 +313,7 @@
             const content = document.getElementById('marquee-content');
             if (data.isActive && data.announcement) {
                 content.innerText = data.announcement;
-                box.style.display = "block";
+                box.style.setProperty('display', 'block', 'important');
             } else {
                 box.style.display = "none";
             }
