@@ -31,6 +31,20 @@
             min-height: 100vh; 
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
+            /* အောက်ခြေဘက်မှာ နေရာလွတ် ချန်ထားရန် */
+            padding-bottom: 80px;
+        }
+
+        /* Banner ပုံများ တစ်ပုံချင်းစီ ပေါ်လာစေမည့် Animation */
+        .banner-img-fade {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .banner-img-fade.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Banner Scroll Animation */
@@ -232,8 +246,8 @@
         
         <aside class="hidden lg:block banner-container mt-12">
             <div class="scroll-wrapper" id="leftBannerWrapper">
-                <img id="leftBanner1" src="" alt="Ad">
-                <img id="leftBanner2" src="" alt="Ad"> </div>
+                <img id="leftBanner1" src="" alt="Ad" class="banner-img-fade">
+                <img id="leftBanner2" src="" alt="Ad" class="banner-img-fade"> </div>
         </aside>
 
         <main class="max-w-7xl flex-grow p-6 md:p-12 overflow-hidden">
@@ -257,8 +271,8 @@
 
         <aside class="hidden lg:block banner-container mt-12">
             <div class="scroll-wrapper" id="rightBannerWrapper">
-                <img id="rightBanner1" src="" alt="Ad">
-                <img id="rightBanner2" src="" alt="Ad"> </div>
+                <img id="rightBanner1" src="" alt="Ad" class="banner-img-fade">
+                <img id="rightBanner2" src="" alt="Ad" class="banner-img-fade"> </div>
         </aside>
 
     </div>
@@ -331,10 +345,23 @@
 
                 // Ads Logic for Scrolling Banner
                 if (data.ads) {
-                    document.getElementById('leftBanner1').src = data.ads.leftAd;
-                    document.getElementById('leftBanner2').src = data.ads.leftAd;
-                    document.getElementById('rightBanner1').src = data.ads.rightAd;
-                    document.getElementById('rightBanner2').src = data.ads.rightAd;
+                    const b1 = document.getElementById('leftBanner1');
+                    const b2 = document.getElementById('leftBanner2');
+                    const b3 = document.getElementById('rightBanner1');
+                    const b4 = document.getElementById('rightBanner2');
+                    
+                    b1.src = data.ads.leftAd;
+                    b2.src = data.ads.leftAd;
+                    b3.src = data.ads.rightAd;
+                    b4.src = data.ads.rightAd;
+
+                    // ပုံများ တစ်ပုံချင်းစီ Animation ဖြင့် ပေါ်လာစေရန်
+                    const banners = [b1, b2, b3, b4];
+                    banners.forEach((img, index) => {
+                        setTimeout(() => {
+                            img.classList.add('show');
+                        }, index * 200); // 0.2s ခြားပြီး ပေါ်လာမည်
+                    });
                 }
                 
                 if (data.products && Array.isArray(data.products)) {
@@ -347,6 +374,8 @@
                 
                 if (allItems.length > 0) {
                     displayProducts(allItems);
+                    // Product များ Load ဖြစ်ပြီးနောက် အောက်ဆုံးသို့ Scroll ဆွဲချမည်
+                    scrollToBottom();
                 } else {
                     grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
                 }
@@ -364,6 +393,15 @@
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('rotating');
             }
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 500); // Product grid render ဖြစ်ချိန် ခဏစောင့်ပေးသည်
         }
 
         function handleMarquee(data) {
@@ -435,6 +473,8 @@
             const filtered = category === 'All' ? allItems : allItems.filter(item => item.category === category);
             displayProducts(filtered);
             document.getElementById('grid-title').innerText = category === 'All' ? "Latest Products" : category;
+            // Filter လုပ်ပြီးတိုင်းလည်း အောက်ခြေကို scroll ပြန်ဆွဲမည်
+            scrollToBottom();
         }
 
         function showDetails(encodedData) {
