@@ -33,6 +33,43 @@
             overflow-x: hidden;
         }
 
+        /* Banner Scroll Animation */
+        .banner-container {
+            width: 180px;
+            height: 600px; /* Banner မြင်ကွင်းအမြင့် */
+            overflow: hidden;
+            position: sticky;
+            top: 120px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+        }
+
+        .scroll-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: scrollVertical 15s linear infinite;
+        }
+
+        .scroll-wrapper img {
+            width: 100%;
+            height: 350px; /* ပုံတစ်ပုံချင်းစီရဲ့ အမြင့် */
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        @keyframes scrollVertical {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); } /* ပုံနှစ်ခုရှိတဲ့အနက် တစ်ခုစာရွေ့ရင် loop ဖြစ်သွားမယ် */
+        }
+
+        /* Hover လုပ်ရင် Animation ရပ်ထားမယ် */
+        .banner-container:hover .scroll-wrapper {
+            animation-play-state: paused;
+        }
+
         .discount-badge {
             position: absolute;
             top: 12px;
@@ -193,8 +230,10 @@
 
     <div class="max-w-[1600px] mx-auto flex justify-center items-start gap-4">
         
-        <aside class="hidden lg:block w-[180px] sticky top-32 mt-12 flex-shrink-0">
-            <img id="leftBanner" src="" class="w-full rounded-2xl border border-white/5 shadow-2xl transition-all duration-500">
+        <aside class="hidden lg:block banner-container mt-12">
+            <div class="scroll-wrapper" id="leftBannerWrapper">
+                <img id="leftBanner1" src="" alt="Ad">
+                <img id="leftBanner2" src="" alt="Ad"> </div>
         </aside>
 
         <main class="max-w-7xl flex-grow p-6 md:p-12 overflow-hidden">
@@ -216,8 +255,10 @@
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"></div>
         </main>
 
-        <aside class="hidden lg:block w-[180px] sticky top-32 mt-12 flex-shrink-0">
-            <img id="rightBanner" src="" class="w-full rounded-2xl border border-white/5 shadow-2xl transition-all duration-500">
+        <aside class="hidden lg:block banner-container mt-12">
+            <div class="scroll-wrapper" id="rightBannerWrapper">
+                <img id="rightBanner1" src="" alt="Ad">
+                <img id="rightBanner2" src="" alt="Ad"> </div>
         </aside>
 
     </div>
@@ -270,8 +311,6 @@
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
-            const leftBanner = document.getElementById('leftBanner');
-            const rightBanner = document.getElementById('rightBanner');
             
             if (allItems.length === 0) {
                 grid.innerHTML = `
@@ -290,10 +329,12 @@
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
 
-                // Column O က ကြော်ငြာပုံ Link တွေကို ထည့်သွင်းခြင်း
+                // Ads Logic for Scrolling Banner
                 if (data.ads) {
-                    if(leftBanner) leftBanner.src = data.ads.leftAd;
-                    if(rightBanner) rightBanner.src = data.ads.rightAd;
+                    document.getElementById('leftBanner1').src = data.ads.leftAd;
+                    document.getElementById('leftBanner2').src = data.ads.leftAd;
+                    document.getElementById('rightBanner1').src = data.ads.rightAd;
+                    document.getElementById('rightBanner2').src = data.ads.rightAd;
                 }
                 
                 if (data.products && Array.isArray(data.products)) {
