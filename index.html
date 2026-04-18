@@ -31,11 +31,9 @@
             min-height: 100vh; 
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            /* အောက်ခြေဘက်မှာ နေရာလွတ် ချန်ထားရန် */
             padding-bottom: 80px;
         }
 
-        /* Banner ပုံများ တစ်ပုံချင်းစီ ပေါ်လာစေမည့် Animation */
         .banner-img-fade {
             opacity: 0;
             transform: translateY(20px);
@@ -47,10 +45,10 @@
             transform: translateY(0);
         }
 
-        /* Banner Scroll Animation */
+        /* Banner Container ကို အောက်ခြေထိ ရှည်အောင် ပြင်ဆင်ထားသည် */
         .banner-container {
             width: 180px;
-            height: 600px; /* Banner မြင်ကွင်းအမြင့် */
+            height: calc(100vh - 160px); /* Screen အမြင့်အတိုင်း အောက်ထိဆင်းစေရန် */
             overflow: hidden;
             position: sticky;
             top: 120px;
@@ -64,22 +62,21 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            animation: scrollVertical 15s linear infinite;
+            animation: scrollVertical 20s linear infinite;
         }
 
         .scroll-wrapper img {
             width: 100%;
-            height: 350px; /* ပုံတစ်ပုံချင်းစီရဲ့ အမြင့် */
+            height: 500px; /* Banner ပုံများ ပိုရှည်စေရန် */
             object-fit: cover;
             border-radius: 20px;
         }
 
         @keyframes scrollVertical {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-50%); } /* ပုံနှစ်ခုရှိတဲ့အနက် တစ်ခုစာရွေ့ရင် loop ဖြစ်သွားမယ် */
+            100% { transform: translateY(-50%); } 
         }
 
-        /* Hover လုပ်ရင် Animation ရပ်ထားမယ် */
         .banner-container:hover .scroll-wrapper {
             animation-play-state: paused;
         }
@@ -246,8 +243,9 @@
         
         <aside class="hidden lg:block banner-container mt-12">
             <div class="scroll-wrapper" id="leftBannerWrapper">
-                <img id="leftBanner1" src="" alt="Ad" class="banner-img-fade">
-                <img id="leftBanner2" src="" alt="Ad" class="banner-img-fade"> </div>
+                <img id="leftBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+                <img id="leftBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+            </div>
         </aside>
 
         <main class="max-w-7xl flex-grow p-6 md:p-12 overflow-hidden">
@@ -271,8 +269,9 @@
 
         <aside class="hidden lg:block banner-container mt-12">
             <div class="scroll-wrapper" id="rightBannerWrapper">
-                <img id="rightBanner1" src="" alt="Ad" class="banner-img-fade">
-                <img id="rightBanner2" src="" alt="Ad" class="banner-img-fade"> </div>
+                <img id="rightBanner1" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+                <img id="rightBanner2" src="" alt="Ad" class="banner-img-fade" fetchpriority="high" loading="eager">
+            </div>
         </aside>
 
     </div>
@@ -343,7 +342,6 @@
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
 
-                // Ads Logic for Scrolling Banner
                 if (data.ads) {
                     const b1 = document.getElementById('leftBanner1');
                     const b2 = document.getElementById('leftBanner2');
@@ -355,12 +353,14 @@
                     b3.src = data.ads.rightAd;
                     b4.src = data.ads.rightAd;
 
-                    // ပုံများ တစ်ပုံချင်းစီ Animation ဖြင့် ပေါ်လာစေရန်
                     const banners = [b1, b2, b3, b4];
                     banners.forEach((img, index) => {
-                        setTimeout(() => {
-                            img.classList.add('show');
-                        }, index * 200); // 0.2s ခြားပြီး ပေါ်လာမည်
+                        // ပုံ Load ဖြစ်ပြီးမှ Animation စတင်ရန်
+                        img.onload = () => {
+                            setTimeout(() => {
+                                img.classList.add('show');
+                            }, index * 100);
+                        };
                     });
                 }
                 
@@ -374,7 +374,6 @@
                 
                 if (allItems.length > 0) {
                     displayProducts(allItems);
-                    // Product များ Load ဖြစ်ပြီးနောက် အောက်ဆုံးသို့ Scroll ဆွဲချမည်
                     scrollToBottom();
                 } else {
                     grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
@@ -401,7 +400,7 @@
                     top: document.body.scrollHeight,
                     behavior: 'smooth'
                 });
-            }, 500); // Product grid render ဖြစ်ချိန် ခဏစောင့်ပေးသည်
+            }, 500); 
         }
 
         function handleMarquee(data) {
@@ -473,7 +472,6 @@
             const filtered = category === 'All' ? allItems : allItems.filter(item => item.category === category);
             displayProducts(filtered);
             document.getElementById('grid-title').innerText = category === 'All' ? "Latest Products" : category;
-            // Filter လုပ်ပြီးတိုင်းလည်း အောက်ခြေကို scroll ပြန်ဆွဲမည်
             scrollToBottom();
         }
 
