@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/lightning-bolt.png">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/lightning-bolt.png">
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,7 @@
             color: #f8fafc; 
             min-height: 100vh; 
             font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden; /* ဖုန်းမှာ ဘေးဘက်စာသားမထွက်စေရန် */
         }
 
         .glass { 
@@ -29,6 +30,7 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            width: 100%; /* ဖုန်းဆိုဒ်အတွက် အပြည့်ယူရန် */
         }
 
         .guarantee-card:hover {
@@ -65,49 +67,54 @@
             background: rgba(255, 255, 255, 0.1);
             color: white;
         }
+
+        /* ဖုန်းမှာ စာသားတွေ အလိုအလျောက် ဆင်းစေရန် */
+        #guarantee-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-line;
+        }
     </style>
 </head>
-<body class="p-6 md:p-12">
-
-    <div class="max-w-4xl mx-auto mb-16 text-center">
-        <div class="flex justify-start mb-8">
-            <button onclick="window.history.back()" class="back-btn px-5 py-2 rounded-xl text-gray-400 flex items-center gap-2 text-sm font-semibold">
+<body class="p-4 md:p-12"> <div class="max-w-4xl mx-auto mb-10 md:mb-16 text-center">
+        <div class="flex justify-start mb-6 md:mb-8">
+            <button onclick="window.history.back()" class="back-btn px-4 md:px-5 py-2 rounded-xl text-gray-400 flex items-center gap-2 text-sm font-semibold">
                 <span class="material-icons-round text-sm">arrow_back_ios</span> Back to Store
             </button>
         </div>
-        <h1 class="text-5xl font-black mb-6 gradient-text tracking-tight">Blitz Service Guarantee</h1>
-        <p class="text-gray-400 text-lg max-w-2xl mx-auto">Blitz Store မှ ဝယ်ယူသူတိုင်း စိတ်အေးချမ်းသာစွာ ဝယ်ယူနိုင်ရန် အကောင်းဆုံးဝန်ဆောင်မှုများဖြင့် အာမခံပါသည်။</p>
+        <h1 class="text-3xl md:text-5xl font-black mb-4 md:mb-6 gradient-text tracking-tight">Blitz Service Guarantee</h1>
+        <p class="text-gray-400 text-base md:text-lg max-w-2xl mx-auto px-2">Blitz Store မှ ဝယ်ယူသူတိုင်း စိတ်အေးချမ်းသာစွာ ဝယ်ယူနိုင်ရန် အကောင်းဆုံးဝန်ဆောင်မှုများဖြင့် အာမခံပါသည်။</p>
     </div>
 
-    <div class="max-w-4xl mx-auto">
-        <div class="glass p-10 rounded-[40px] guarantee-card">
+    <div class="max-w-4xl mx-auto px-2 md:px-0"> <div class="glass p-6 md:p-10 rounded-[30px] md:rounded-[40px] guarantee-card border border-blue-500/20">
             <div class="icon-box text-blue-400">
                 <span class="material-icons-round text-3xl">verified_user</span>
             </div>
-            <h3 class="text-2xl font-bold mb-6 text-white border-b border-white/10 pb-4">Blitz Store အာမခံချက်များ</h3>
-            <p id="guarantee-content" class="text-gray-400 leading-relaxed whitespace-pre-line text-lg">
+            <h3 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white border-b border-white/10 pb-4">Blitz Store အာမခံချက်များ</h3>
+            <p id="guarantee-content" class="text-gray-400 leading-relaxed text-base md:text-lg">
                 အချက်အလက်များကို ရယူနေပါသည်...
             </p>
         </div>
     </div>
 
-    <div class="max-w-4xl mx-auto mt-20 text-center">
+    <div class="max-w-4xl mx-auto mt-12 md:mt-20 text-center pb-10">
         <div class="inline-flex items-center gap-2 px-6 py-3 glass rounded-full border border-blue-500/20">
             <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Blitz Store Official Service</span>
+            <span class="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">Blitz Store Official Service</span>
         </div>
     </div>
 
     <script>
-        // သင်၏ Apps Script Web App URL ကို ဤနေရာတွင် အစားထိုးပါ
+        // သင်၏ Apps Script Web App URL
         const API_URL = "https://script.google.com/macros/s/AKfycbx8FXk1F4JPLGaIA-Xj694xDoLc8i3tKeykCiCUvhpGviZUcKT8moBnAE6RY9HdAHVr/exec";
 
         async function fetchGuarantees() {
             try {
-                const response = await fetch(API_URL);
+                // Cache ပြဿနာမရှိစေရန် timestamp ထည့်သွင်းခေါ်ယူခြင်း
+                const response = await fetch(API_URL + "?t=" + new Date().getTime());
                 const data = await response.json();
                 
-                // Column N (guarantee) မှ အချက်အလက်ကို ရယူပြသခြင်း
+                // Column N (Index 13) မှ အချက်အလက်ကို ပြသခြင်း
                 if (data.products && data.products.length > 0) {
                     const guaranteeText = data.products[0].guarantee;
                     document.getElementById('guarantee-content').innerText = guaranteeText || "အာမခံချက် အချက်အလက်များ မရှိသေးပါ။";
@@ -118,7 +125,6 @@
             }
         }
 
-        // စာမျက်နှာစတင်ချိန်တွင် function ကို ခေါ်ယူရန်
         window.onload = fetchGuarantees;
     </script>
 
