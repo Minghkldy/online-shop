@@ -49,7 +49,6 @@
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
-        /* Marquee Container CSS */
         .nav-marquee-container {
             flex-grow: 1;
             overflow: hidden;
@@ -57,10 +56,9 @@
             margin: 0 20px;
             background: rgba(37, 99, 235, 0.1);
             border-radius: 12px;
-            display: block; /* အမြဲပေါ်နေအောင် block ထားပါသည် */
+            display: block;
         }
 
-        /* ဖုန်းဆိုဒ်အတွက် Layout ပြင်ဆင်ချက် */
         @media (max-width: 768px) {
             nav { 
                 display: flex;
@@ -70,8 +68,8 @@
                 gap: 10px; 
                 padding: 12px 15px !important; 
             }
-            nav h1 { order: 1; font-size: 20px; } /* Logo */
-            nav .nav-actions { order: 2; } /* Buttons */
+            nav h1 { order: 1; font-size: 20px; }
+            nav .nav-actions { order: 2; }
             .nav-marquee-container { 
                 order: 3; 
                 width: 100%; 
@@ -193,24 +191,36 @@
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto p-6 md:p-12">
-        <div class="flex items-center gap-3 overflow-x-auto pb-8 mb-4 no-scrollbar" id="category-list">
-            <button onclick="filterProducts('All', this)" class="cat-btn active">All Collection</button>
-            <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn">လူကြီးကစားစရာ</button>
-            <button onclick="filterProducts('Clothing', this)" class="cat-btn">Clothing</button>
-            <button onclick="filterProducts('Electronics', this)" class="cat-btn">Electronics</button>
-            <button onclick="filterProducts('Gadgets', this)" class="cat-btn">Gadgets</button>
-            <button onclick="filterProducts('Shoes', this)" class="cat-btn">Shoes</button>
-            <button onclick="filterProducts('Cosmetics', this)" class="cat-btn">Cosmetics</button>
-            <button onclick="filterProducts('Food', this)" class="cat-btn">Food</button>
-        </div>
-
-        <div class="mb-10">
-            <h2 class="text-3xl md:text-4xl font-black bg-gradient-to-br from-white to-gray-500 bg-clip-text text-transparent" id="grid-title">Latest Products</h2>
-        </div>
+    <div class="max-w-[1600px] mx-auto flex justify-center items-start gap-4">
         
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"></div>
-    </main>
+        <aside class="hidden lg:block w-[180px] sticky top-32 mt-12 flex-shrink-0">
+            <img id="leftBanner" src="" class="w-full rounded-2xl border border-white/5 shadow-2xl transition-all duration-500">
+        </aside>
+
+        <main class="max-w-7xl flex-grow p-6 md:p-12 overflow-hidden">
+            <div class="flex items-center gap-3 overflow-x-auto pb-8 mb-4 no-scrollbar" id="category-list">
+                <button onclick="filterProducts('All', this)" class="cat-btn active">All Collection</button>
+                <button onclick="filterProducts('လူကြီးကစားစရာအရုပ်', this)" class="cat-btn">လူကြီးကစားစရာ</button>
+                <button onclick="filterProducts('Clothing', this)" class="cat-btn">Clothing</button>
+                <button onclick="filterProducts('Electronics', this)" class="cat-btn">Electronics</button>
+                <button onclick="filterProducts('Gadgets', this)" class="cat-btn">Gadgets</button>
+                <button onclick="filterProducts('Shoes', this)" class="cat-btn">Shoes</button>
+                <button onclick="filterProducts('Cosmetics', this)" class="cat-btn">Cosmetics</button>
+                <button onclick="filterProducts('Food', this)" class="cat-btn">Food</button>
+            </div>
+
+            <div class="mb-10">
+                <h2 class="text-3xl md:text-4xl font-black bg-gradient-to-br from-white to-gray-500 bg-clip-text text-transparent" id="grid-title">Latest Products</h2>
+            </div>
+            
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"></div>
+        </main>
+
+        <aside class="hidden lg:block w-[180px] sticky top-32 mt-12 flex-shrink-0">
+            <img id="rightBanner" src="" class="w-full rounded-2xl border border-white/5 shadow-2xl transition-all duration-500">
+        </aside>
+
+    </div>
 
     <div id="zoomOverlay">
         <div class="zoom-nav left-5" onclick="changeZoomImg(-1)" style="left:20px">❮</div>
@@ -260,6 +270,8 @@
         async function loadProducts() {
             const grid = document.getElementById('product-grid');
             const refreshIcon = document.getElementById('refreshIcon');
+            const leftBanner = document.getElementById('leftBanner');
+            const rightBanner = document.getElementById('rightBanner');
             
             if (allItems.length === 0) {
                 grid.innerHTML = `
@@ -277,8 +289,13 @@
                 
                 localStorage.setItem('blitz_products', JSON.stringify(data));
                 handleMarquee(data);
+
+                // Column O က ကြော်ငြာပုံ Link တွေကို ထည့်သွင်းခြင်း
+                if (data.ads) {
+                    if(leftBanner) leftBanner.src = data.ads.leftAd;
+                    if(rightBanner) rightBanner.src = data.ads.rightAd;
+                }
                 
-                // JSON format နှစ်မျိုးလုံးအတွက် စစ်ဆေးသည်
                 if (data.products && Array.isArray(data.products)) {
                     allItems = data.products;
                 } else if (Array.isArray(data)) {
