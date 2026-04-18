@@ -120,7 +120,7 @@
 
         .slider-item {
             flex: 0 0 100%; scroll-snap-align: start;
-            height: 350px; object-fit: cover; border-radius: 24px; cursor: zoom-in;
+            aspect-ratio: 3/4; object-fit: cover; object-position: top; border-radius: 24px; cursor: zoom-in;
         }
 
         .rotating { animation: rotate 1s linear infinite; }
@@ -236,53 +236,48 @@
         let currentZoomIndex = 0;
 
         async function loadProducts() {
-    const grid = document.getElementById('product-grid');
-    const refreshIcon = document.getElementById('refreshIcon');
-    
-    // ၁။ အရင်ဆုံး UI မှာ loading ပြထားမယ်
-    if (allItems.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-full text-center py-32">
-                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
-            </div>`;
-    }
+            const grid = document.getElementById('product-grid');
+            const refreshIcon = document.getElementById('refreshIcon');
+            
+            if (allItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-32">
+                        <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                        <p class="text-gray-400 font-medium tracking-wide">Syncing with Database...</p>
+                    </div>`;
+            }
 
-    if(refreshIcon) refreshIcon.classList.add('rotating');
-    
-    try {
-        // ၂။ API ကနေ data ကို တိုက်ရိုက်ဆွဲမယ် (await သုံးထားလို့ data ရမှ အောက်က code တွေ ဆက်လုပ်မယ်)
-        const response = await fetch(api_url);
-        const data = await response.json();
-        
-        // ၃။ ရလာတဲ့ data ကို သိမ်းမယ်
-        localStorage.setItem('blitz_products', JSON.stringify(data));
-        handleMarquee(data);
-        
-        // ၄။ Data structure ကို သေချာစစ်ပြီးမှ display လုပ်မယ်
-        allItems = data.products || (Array.isArray(data) ? data : []);
-        
-        if (allItems.length > 0) {
-            displayProducts(allItems);
-        } else {
-            grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
-        }
+            if(refreshIcon) refreshIcon.classList.add('rotating');
+            
+            try {
+                const response = await fetch(api_url);
+                const data = await response.json();
+                
+                localStorage.setItem('blitz_products', JSON.stringify(data));
+                handleMarquee(data);
+                
+                allItems = data.products || (Array.isArray(data) ? data : []);
+                
+                if (allItems.length > 0) {
+                    displayProducts(allItems);
+                } else {
+                    grid.innerHTML = "<p class='col-span-full text-center text-gray-500 py-10'>No products found.</p>";
+                }
 
-    } catch (error) {
-        console.error("Fetch error:", error);
-        // ၅။ Error တက်ရင်မှ Cache ထဲကဟာကို ပြန်သုံးမယ်
-        const cachedData = localStorage.getItem('blitz_products');
-        if (cachedData) {
-            const data = JSON.parse(cachedData);
-            allItems = data.products || data;
-            displayProducts(allItems);
-        } else {
-            grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+            } catch (error) {
+                console.error("Fetch error:", error);
+                const cachedData = localStorage.getItem('blitz_products');
+                if (cachedData) {
+                    const data = JSON.parse(cachedData);
+                    allItems = data.products || data;
+                    displayProducts(allItems);
+                } else {
+                    grid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">⚠️ ချိတ်ဆက်မှု အဆင်မပြေပါ။</div>`;
+                }
+            } finally {
+                if(refreshIcon) refreshIcon.classList.remove('rotating');
+            }
         }
-    } finally {
-        if(refreshIcon) refreshIcon.classList.remove('rotating');
-    }
-}
 
         function handleMarquee(data) {
             const box = document.getElementById('marquee-box');
@@ -295,7 +290,6 @@
             }
         }
 
-        // --- ပြင်ဆင်ထားသော displayProducts function ---
         function displayProducts(items) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = ""; 
@@ -309,7 +303,6 @@
                 const imgList = [item.img1, item.img2, item.img3].filter(img => img && img.trim() !== "");
                 const imgListJSON = JSON.stringify(imgList);
 
-                // Discount Logic
                 const originalPrice = Number(item.price); 
                 const discountPercent = Number(item.discount || 0);
                 const hasDiscount = discountPercent > 0;
@@ -330,10 +323,10 @@
 
                 grid.innerHTML += `
                     <div class="product-card p-4 rounded-[32px] flex flex-col ${isSold ? 'opacity-60 grayscale' : ''} relative">
-                        <div class="w-full h-52 mb-5 overflow-hidden rounded-[24px] relative group">
+                        <div class="w-full aspect-[3/4] mb-5 overflow-hidden rounded-[24px] relative group bg-slate-800">
                             <span class="absolute top-3 left-3 z-10 bg-black/60 backdrop-blur-md text-[10px] px-3 py-1.5 rounded-full font-bold uppercase border border-white/10">${item.category || 'Luxury'}</span>
                             ${discountBadgeHTML}
-                            <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                            <img src="${item.img1}" onclick='openZoom(${imgListJSON}, 0)' class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110 cursor-zoom-in" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                             ${isSold ? `<div class="absolute inset-0 flex items-center justify-center bg-black/40"><span class="bg-red-500 text-white px-5 py-2 rounded-full font-black text-xs uppercase">Sold Out</span></div>` : ''}
                         </div>
                         <div class="px-2 flex flex-col flex-grow">
@@ -357,7 +350,6 @@
             document.getElementById('grid-title').innerText = category === 'All' ? "Latest Products" : category;
         }
 
-        // --- ပြင်ဆင်ထားသော showDetails function ---
         function showDetails(encodedData) {
             const item = JSON.parse(decodeURIComponent(encodedData));
             const modal = document.getElementById('detailModal');
