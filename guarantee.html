@@ -79,48 +79,16 @@
         <p class="text-gray-400 text-lg max-w-2xl mx-auto">Blitz Store မှ ဝယ်ယူသူတိုင်း စိတ်အေးချမ်းသာစွာ ဝယ်ယူနိုင်ရန် အကောင်းဆုံးဝန်ဆောင်မှုများဖြင့် အာမခံပါသည်။</p>
     </div>
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
+    <div class="max-w-4xl mx-auto">
+        <div class="glass p-10 rounded-[40px] guarantee-card">
             <div class="icon-box text-blue-400">
-                <span class="material-icons-round text-3xl">history</span>
+                <span class="material-icons-round text-3xl">verified_user</span>
             </div>
-            <h3 class="text-2xl font-bold mb-4 text-white">၁၅ ရက်အတွင်း အခမဲ့ပြန်အမ်းခြင်း</h3>
-            <p class="text-gray-400 leading-relaxed">
-                သင်၏ဝယ်ယူမှုအပေါ် စိတ်ကျေနပ်မှုရှိစေရန် <span class="text-blue-400 font-bold">BLITZ STORE</span> ပစ္စည်းများအတွက် ၁၀ ရက်အတွင်း အခမဲ့ပြန်လဲနိုင်မှုရှိပါသည်။ လူကြီးမင်း မှာယူရာတွင် ပစ္စည်းတန်ဖိုး၏ တစ်ဝက် ( ၅၀% ) ကြိုတင်ပေးချေရမည်ဖြစ်ပြီး မှာယူပစ္စည်းရရှိမှသာ ကျန်ငွေအားပေးချေနိုင်သည်။
+            <h3 class="text-2xl font-bold mb-6 text-white border-b border-white/10 pb-4">Blitz Store အာမခံချက်များ</h3>
+            <p id="guarantee-content" class="text-gray-400 leading-relaxed whitespace-pre-line text-lg">
+                အချက်အလက်များကို ရယူနေပါသည်...
             </p>
         </div>
-
-        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
-            <div class="icon-box text-red-400" style="background: rgba(239, 68, 68, 0.1);">
-                <span class="material-icons-round text-3xl">verified</span>
-            </div>
-            <h3 class="text-2xl font-bold mb-4 text-white">100% ပစ္စည်းအစစ်</h3>
-            <p class="text-gray-400 leading-relaxed">
-                <span class="text-red-400 font-bold">BLITZ STORE</span> မှထုတ်ကုန်များသည် 100% အစစ်ဖြစ်ကြောင်း BLITZ STORE မှအာမခံပါသည်။ အကယ်၍ သင့်ထံသို့ အစစ်အမှန်မဟုတ်သောထုတ်ကုန်များ ရောက်ရှိလာပါက ထုတ်ကုန်တန်ဖိုး၏ <span class="text-white font-bold underline">နှစ်ဆ</span> ကို ပြန်လည်အလျော်ပေးမှာဖြစ်ပါသည်။
-            </p>
-        </div>
-
-        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
-            <div class="icon-box text-emerald-400" style="background: rgba(16, 185, 129, 0.1);">
-                <span class="material-icons-round text-3xl">local_offer</span>
-            </div>
-            <h3 class="text-2xl font-bold mb-4 text-white">အထူးလျှော့စျေးများ</h3>
-            <p class="text-gray-400 leading-relaxed">
-                <span class="text-emerald-400 font-bold">BLITZ STORE</span> မှ ထိပ်တန်းတံဆိပ်များ၏ အထူးလျှော့ဈေးများကို စိတ်ကြိုက်ခံစားလိုက်ပါ။
-            </p>
-        </div>
-
-        <div class="glass p-10 rounded-[40px] guarantee-card flex flex-col items-start">
-            <div class="icon-box text-amber-400" style="background: rgba(245, 158, 11, 0.1);">
-                <span class="material-icons-round text-3xl">inventory_2</span>
-            </div>
-            <h3 class="text-2xl font-bold mb-4 text-white">BLITZ STORE မှဖြည့်ဆည်းပေးသော</h3>
-            <p class="text-gray-400 leading-relaxed">
-                BLITZ STORE မှဖြည့်ဆည်းပေးသော ထုတ်ကုန်ကို <span class="text-amber-400 font-bold">BLITZ STORE</span> မှ ရွေးချယ်၊ ပြင်ဆင်ပြီး စီမံခန့်ခွဲထားပြီးဖြစ်ပါသည်။ သင့်ထံသို့ အကောင်းဆုံးသော အရည်အသွေး နှင့် ပို့ဆောင်ရေးဝန်ဆောင်မှုများရရှိစေရန် စီစဉ်ပေးထားပါသည်။
-            </p>
-        </div>
-
     </div>
 
     <div class="max-w-4xl mx-auto mt-20 text-center">
@@ -129,6 +97,30 @@
             <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Blitz Store Official Service</span>
         </div>
     </div>
+
+    <script>
+        // သင်၏ Apps Script Web App URL ကို ဤနေရာတွင် အစားထိုးပါ
+        const API_URL = "သင်၏_NEW_DEPLOY_URL_ဒီမှာထည့်ပါ";
+
+        async function fetchGuarantees() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Column N (guarantee) မှ အချက်အလက်ကို ရယူပြသခြင်း
+                if (data.products && data.products.length > 0) {
+                    const guaranteeText = data.products[0].guarantee;
+                    document.getElementById('guarantee-content').innerText = guaranteeText || "အာမခံချက် အချက်အလက်များ မရှိသေးပါ။";
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('guarantee-content').innerText = "ဒေတာဆွဲယူရာတွင် အမှားအယွင်းရှိနေပါသည်။";
+            }
+        }
+
+        // စာမျက်နှာစတင်ချိန်တွင် function ကို ခေါ်ယူရန်
+        window.onload = fetchGuarantees;
+    </script>
 
 </body>
 </html>
